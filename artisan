@@ -1,0 +1,33 @@
+#!/usr/bin/env php
+<?php
+
+use Illuminate\Foundation\Console\Kernel;
+use Symfony\Component\Console\Input\ArgvInput;
+use Symfony\Component\Console\Output\ConsoleOutput;
+
+define('LARAVEL_START', microtime(true));
+
+// Register Composer autoloader
+require __DIR__.'/vendor/autoload.php';
+
+// Bootstrap Laravel
+$app = require_once __DIR__.'/bootstrap/app.php';
+
+// Ensure $app is initialized properly
+if (!$app instanceof Illuminate\Contracts\Foundation\Application) {
+    fwrite(STDERR, "Error: Laravel application failed to initialize.\n");
+    exit(1);
+}
+
+// Make Kernel instance
+$kernel = $app->make(Kernel::class);
+
+// Handle command
+$status = $kernel->handle(
+    $input = new ArgvInput(),
+    new ConsoleOutput()
+);
+
+$kernel->terminate($input, $status);
+
+exit($status);

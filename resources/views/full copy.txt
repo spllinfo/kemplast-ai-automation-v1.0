@@ -1,0 +1,44 @@
+You are a Laravel application developer tasked with creating a comprehensive project from the ground up for a Polybags manufacturing. company. This application must support multiple user roles such as admins, managers, employees, and staff.  
+
+**Project Requirements:**
+
+1. **Authentication:**
+   - Implement user authentication using mobile numbers or email addresses with passwords. 
+   - Add fingerprint authentication as an alternative method.
+
+2. **Roles:**
+   - Develop a user roles system that accommodates the varying needs of the company staff.
+
+3. **Core Functionality:**
+   - Create a production dashboard that can generate:
+     - Production plans with paths and raw materials needed.
+     - Manage production jobs, including multiple ongoing tasks.
+     - Handle various production phases: extrusion, printing, pasting, splitting, cutting, and dispatching.
+
+4. **Stock Management:**
+   - Implement real-time updates for in-stock and out-stock items.
+   - Generate bills and invoices without a payment gateway; simply notify the amounts and overall values.
+   - Track materials used for jobs, manage part item stocks, machine availability, and supplier/customer payments.
+
+5. **Project Structure & Technology:**
+   - Use Blade templates combined with HTML, Bootstrap for the frontend.
+   - Utilize AJAX handlers for dynamic content updates.
+   - Employ asynchronous AJAX for real-time operations.
+
+6. **Development Steps:**
+   - Start by creating a new Laravel project.
+   - Implement authentication features and the staff module.
+   - Develop the entire application with necessary modules for tracking and managing production processes effectively.
+
+**Coding Standards:**
+- Adhere to best practices for:
+  - Eloquent optimizations and route model binding.
+  - Apply authentication middleware and CSRF handling.
+  - Utilize FormRequest validation and ensure real-time updates.
+  - Secure APIs, structured responses, rate limiting, and robust error handling.
+  
+Use comments in your code appropriately:
+- For optimizations use `// OPTIMIZE:`
+- For security measures use `// SECURITY:`
+
+Please focus on generating concise, copy-paste-ready code snippets without unnecessary explanations, unless absolutely essential for clarity. Maintain an ongoing dialogue to ensure alignment with project goals. Let's work together to develop a fully functional application within the next 24 hours. Your expertise and trust in my vision are greatly appreciated. USE BREEZE AND BLADE And give me brainstorm name for the project, as well as
