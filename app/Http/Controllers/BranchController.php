@@ -94,7 +94,7 @@ class BranchController extends Controller
                                        role="button"
                                        aria-controls="viewDataModal"
                                        class=" ViewDataIcon"
-                                       data-id="' . $branch->id . '">' . $branch->branch_name . '</a>
+                                       data-id="' . $branch->id . '">' . $branch->name . '</a>
                                 </div>
                             </div>
                         </td>
@@ -109,7 +109,7 @@ class BranchController extends Controller
                         <td>
                             <span class="d-block"><i class="ri-phone-line fs-14 text-muted d-inline-block me-2 align-middle"></i>'.$branch->branch_phone.'</span>
                         </td>
-                      
+
 
                           <td>
                         <div class="d-flex align-items-center gap-2">

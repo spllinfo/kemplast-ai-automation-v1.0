@@ -19,6 +19,7 @@ use App\Http\Controllers\SettingController;
 use App\Http\Controllers\ExcelController;
 use App\Http\Controllers\DispatchController;
 use App\Http\Controllers\BiometricController;
+use App\Http\Controllers\MaterialController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -65,17 +66,24 @@ Route::get('/', function () {
         Route::post('/remove', [BiometricController::class, 'remove'])->name('biometric.remove');
     });
 
-// Parts Routes
-Route::get('/parts', [PartController::class, 'index'])->name('parts.index');
-Route::get('/parts/fetchall', [PartController::class, 'fetchAll'])->name('parts.fetchAll');
-Route::post('/parts/store', [PartController::class, 'store'])->name('parts.store');
-Route::get('/parts/edit/{id}', [PartController::class, 'edit'])->name('parts.edit');
-Route::get('/parts/view/{id}', [PartController::class, 'view'])->name('parts.view');
-Route::put('/parts/update/{id}', [PartController::class, 'update'])->name('parts.update');
-Route::delete('/parts/destroy/{id}', [PartController::class, 'destroy'])->name('parts.destroy');
-Route::post('/parts/export', [PartController::class, 'export'])->name('parts.export');
-Route::post('/parts/upload-documents', [PartController::class, 'uploadDocuments'])->name('parts.upload-documents');
+// Parts routes with request-logger middleware
+    // Parts routes
+    Route::get('/parts', [PartController::class, 'index'])->name('parts'); // Index page
 
+    // Read operations
+    Route::get('/partfetchall', [PartController::class, 'fetchAll'])->name('partfetchall');
+    Route::get('/partedit', [PartController::class, 'edit'])->name('partedit');
+    Route::get('/partview', [PartController::class, 'view'])->name('partview');
+    Route::get('/partformstate', [PartController::class, 'getFormState'])->name('partformstate');
+
+    // Write operations with rate limiting
+    Route::post('/partstore', [PartController::class, 'store'])->name('partstore');
+    Route::post('/partupdate', [PartController::class, 'update'])->name('partupdate');
+    Route::delete('/parts/{part}', [PartController::class, 'destroy'])->name('partdestroy');
+    Route::get('/partexport', [PartController::class, 'export'])->name('partexport');
+    Route::post('/partautosave', [PartController::class, 'autosave'])->name('partautosave');
+    Route::post('/partimport', [PartController::class, 'import'])->name('partimport');
+    Route::post('/parts/upload-documents', [PartController::class, 'uploadDocuments'])->name('parts.upload-documents');
 
 Route::get('/extrusion', function () {
     return view('extrusion');
@@ -140,22 +148,24 @@ Route::post('/dispatch-import', [ExcelController::class, 'dispatchimport'])->nam
 
 
 // Customer routes with request-logger middleware
+    // Customer routes
+    Route::get('/customers', [CustomerController::class, 'customers'])->name('customers'); // Index page
 
-    Route::get('/customers', [CustomerController::class, 'customers']); // Index page
     // Read operations
     Route::get('/customerfetchall', [CustomerController::class, 'customerfetchall'])->name('customerfetchall');
     Route::get('/customeredit', [CustomerController::class, 'customeredit'])->name('customeredit');
     Route::get('/customerview', [CustomerController::class, 'customerview'])->name('customerview');
     Route::get('/customerformstate', [CustomerController::class, 'getFormState'])->name('customerformstate');
 
-    // Write operations with rate limiting (10 requests per minute)
+    // Write operations with rate limiting
 
         Route::post('/customerstore', [CustomerController::class, 'customerstore'])->name('customerstore');
         Route::post('/customerupdate', [CustomerController::class, 'customerupdate'])->name('customerupdate');
-        Route::delete('/customers/{customer}', [CustomerController::class, 'destroy']);
-        Route::post('/customerexport', [CustomerController::class, 'customerexport'])->name('customerexport');
+        Route::delete('/customers/{customer}', [CustomerController::class, 'destroy'])->name('customerdestroy');
+        Route::get('/customerexport', [CustomerController::class, 'customerexport'])->name('customerexport');
         Route::post('/customerautosave', [CustomerController::class, 'autosave'])->name('customerautosave');
         Route::post('/customerimport', [CustomerController::class, 'customerimport'])->name('customerimport');
+
 
 
 // Admin Supplier Routes
@@ -173,6 +183,7 @@ Route::post('/supplierexport', [SupplierController::class, 'supplierexport'])->n
 // Admin Machine Routes
 Route::get('/machines', [MachineController::class, 'machines'])->name('machines');
 Route::get('/machines/fetchall', [MachineController::class, 'machinefetchall'])->name('machinefetchall');
+Route::get('/machines/data', [MachineController::class, 'getData'])->name('machinedata');
 Route::post('/machines/store', [MachineController::class, 'machinestore'])->name('machinestore');
 Route::get('/machines/edit', [MachineController::class, 'machineedit'])->name('machineedit');
 Route::get('/machines/view', [MachineController::class, 'machineview'])->name('machineview');
@@ -193,17 +204,6 @@ Route::post('/branches/destroy', [BranchController::class, 'branchdestroy'])->na
 Route::post('/branches/export', [BranchController::class, 'branchexport'])->name('branchexport');
 
 
-// Parts Routes
-// Route::get('/parts', [PartController::class, 'parts'])->name('parts');
-// Route::get('/parts/fetchall', [PartController::class, 'partfetchall'])->name('partfetchall');
-// Route::post('/parts/store', [PartController::class, 'partstore'])->name('partstore');
-// Route::get('/parts/edit', [PartController::class, 'partedit'])->name('partedit');
-// Route::get('/parts/view', [PartController::class, 'partview'])->name('partview');
-// Route::post('/parts/update', [PartController::class, 'partupdate'])->name('partupdate');
-// Route::post('/parts/destroy', [PartController::class, 'partdestroy'])->name('partdestroy');
-// Route::post('/parts/export', [PartController::class, 'partexport'])->name('partexport');
-// Route::post('/parts/import', [PartController::class, 'partimport'])->name('partimport');
-
 // Admin Job Part Routes
 Route::get('/jobparts', [JobPartController::class, 'jobparts'])->name('jobparts');
 Route::get('/jobparts/fetchall', [JobPartController::class, 'jobpartfetchall'])->name('jobpartfetchall');
@@ -215,14 +215,14 @@ Route::post('/jobparts/destroy', [JobPartController::class, 'jobpartdestroy'])->
 Route::post('/jobparts/export', [JobPartController::class, 'jobpartexport'])->name('jobpartexport');
 
 // Admin Material Stock Routes
-Route::get('/materialstocks', [MaterialStockController::class, 'materialstocks'])->name('materialstocks');
-Route::get('/materialstocks/fetchall', [MaterialStockController::class, 'materialstockfetchall'])->name('materialstockfetchall');
-Route::post('/materialstocks/store', [MaterialStockController::class, 'materialstockstore'])->name('materialstockstore');
-Route::get('/materialstocks/edit', [MaterialStockController::class, 'materialstockedit'])->name('materialstockedit');
-Route::get('/materialstocks/view', [MaterialStockController::class, 'materialstockview'])->name('materialstockview');
-Route::post('/materialstocks/update', [MaterialStockController::class, 'materialstockupdate'])->name('materialstockupdate');
-Route::post('/materialstocks/destroy', [MaterialStockController::class, 'materialstockdestroy'])->name('materialstockdestroy');
-Route::post('/materialstocks/export', [MaterialStockController::class, 'materialstockexport'])->name('materialstockexport');
+// Route::get('/materialstocks', [MaterialStockController::class, 'materialstocks'])->name('materialstocks');
+// Route::get('/materialstocks/fetchall', [MaterialStockController::class, 'materialstockfetchall'])->name('materialstockfetchall');
+// Route::post('/materialstocks/store', [MaterialStockController::class, 'materialstockstore'])->name('materialstockstore');
+// Route::get('/materialstocks/edit', [MaterialStockController::class, 'materialstockedit'])->name('materialstockedit');
+// Route::get('/materialstocks/view', [MaterialStockController::class, 'materialstockview'])->name('materialstockview');
+// Route::post('/materialstocks/update', [MaterialStockController::class, 'materialstockupdate'])->name('materialstockupdate');
+// Route::post('/materialstocks/destroy', [MaterialStockController::class, 'materialstockdestroy'])->name('materialstockdestroy');
+// Route::post('/materialstocks/export', [MaterialStockController::class, 'materialstockexport'])->name('materialstockexport');
 
 
 Route::get('/stock-alert', function () {
@@ -262,7 +262,16 @@ Route::get('/clear-cache', function () {
     return 'All caches cleared and application optimized successfully.';
 });
 
+// Material Management Routes
 
+    Route::get('/materials', [MaterialController::class, 'index'])->name('materials.index');
+    Route::get('/materials/list', [MaterialController::class, 'list'])->name('materials.list');
+    Route::post('/materials', [MaterialController::class, 'store'])->name('materials.store');
+    Route::get('/materials/{id}', [MaterialController::class, 'show'])->name('materials.show');
+    Route::post('/materials/{id}', [MaterialController::class, 'update'])->name('materials.update');
+    Route::delete('/materials/{id}', [MaterialController::class, 'destroy'])->name('materials.destroy');
+    Route::get('/materials/export', [MaterialController::class, 'export'])->name('materials.export');
+    Route::post('/materials/import', [MaterialController::class, 'import'])->name('materials.import');
 
 
 // Route::middleware(['auth'])->group(function () {

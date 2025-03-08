@@ -133,7 +133,7 @@ class PrintingProcessSeeder extends Seeder
                                 'color' => fake()->safeColorName(),
                                 'remaining' => fake()->randomFloat(2, 0, 10)
                             ];
-                        }, range(1, fake()->numberBetween(1, 8))),
+                        }, range(1, fake()->numberBetween(1, 8)))),
 
                         // Quality Control
                         'color_density_readings' => json_encode(array_map(function($colorNum) {
@@ -142,7 +142,7 @@ class PrintingProcessSeeder extends Seeder
                                 'target' => fake()->randomFloat(2, 1.2, 1.8),
                                 'actual' => fake()->randomFloat(2, 1.0, 2.0)
                             ];
-                        }, range(1, fake()->numberBetween(1, 8))),
+                        }, range(1, fake()->numberBetween(1, 8)))),
                         'registration_accuracy' => json_encode([
                             'x_axis' => fake()->randomFloat(3, -0.1, 0.1),
                             'y_axis' => fake()->randomFloat(3, -0.1, 0.1)

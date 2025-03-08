@@ -215,6 +215,7 @@ class SupplierController extends Controller
             'length' => 8,
             'prefix' => 'SUP'
         ];
+        
         $supplier_unique_code = IdGenerator::generate($unique_code);
 
         $supplierProfilePicture = null;  // Initialize

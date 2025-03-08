@@ -11,40 +11,81 @@ class Material extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
+        // Basic Information
         'material_code',
         'material_name',
         'material_type',
         'material_grade',
         'material_category',
+        'material_color',
+
+        // Stock Information
+        'opening_balance',
         'quantity',
         'uom',
         'minimum_stock_level',
         'maximum_stock_level',
         'reorder_point',
+        'safety_stock',
+
+        // Pricing
         'unit_price',
         'last_purchase_price',
         'currency',
+        'tax_rate',
+        'hsn_code',
+
+        // Physical Properties
         'density',
         'melt_flow_index',
         'technical_properties',
+        'standard_weight',
+        'standard_length',
+        'standard_width',
+
+        // Storage
         'warehouse_location',
         'bin_location',
         'storage_conditions',
+        'shelf_life_days',
+
+        // Quality
         'quality_grade',
         'quality_parameters',
         'manufacture_date',
         'expiry_date',
+        'requires_inspection',
+        'inspection_interval_days',
+
+        // Supplier Info
         'primary_supplier_id',
         'alternative_suppliers',
         'manufacturer_name',
         'brand_name',
+        'lead_time_days',
+        'minimum_order_quantity',
+
+        // Documentation
         'material_image',
         'msds_document',
         'technical_datasheet',
+        'quality_certificate',
         'notes',
         'certificates',
+
+        // Status and Control
+        'status',
+        'is_active',
+        'is_returnable',
+        'is_batch_tracked',
+        'requires_coa',
+
+        // Tracking
+        'created_by',
+        'updated_by',
         'branch_id',
-        'is_active'
+        'last_stock_update',
+        'last_price_update'
     ];
 
     protected $casts = [
@@ -55,14 +96,13 @@ class Material extends Model
         'certificates' => 'array',
         'manufacture_date' => 'date',
         'expiry_date' => 'date',
+        'last_stock_update' => 'datetime',
+        'last_price_update' => 'datetime',
+        'requires_inspection' => 'boolean',
         'is_active' => 'boolean',
-        'quantity' => 'decimal:3',
-        'unit_price' => 'decimal:2',
-        'minimum_stock_level' => 'decimal:3',
-        'maximum_stock_level' => 'decimal:3',
-        'reorder_point' => 'decimal:3',
-        'density' => 'decimal:3',
-        'melt_flow_index' => 'decimal:3'
+        'is_returnable' => 'boolean',
+        'is_batch_tracked' => 'boolean',
+        'requires_coa' => 'boolean'
     ];
 
     // Relationships
@@ -115,7 +155,7 @@ class Material extends Model
     // Methods
     public function updateStock($quantity, $type = 'add')
     {
-        $this->quantity = $type === 'add' 
+        $this->quantity = $type === 'add'
             ? $this->quantity + $quantity
             : $this->quantity - $quantity;
         $this->save();

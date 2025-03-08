@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 
-{{-- <html lang="en" loader="disable" data-page-style="regular" data-menu-styles="dark" data-bg-img="bgimg2" data-nav-layout="vertical"  data-header-styles="light" data-theme-mode="light" data-toggled="" style="--primary-rgb: 63, 75, 236;" > --}}
 <html lang="en"
       loader="disable"
       data-page-style="regular"
@@ -20,7 +19,7 @@
     <meta name="csrf-token"
           content="{{ csrf_token() }}">
     <meta name="_token"
-          content="{{ csrf_token() }}">
+          content="{{ csrf_token() }}">f
 
   <!-- include jQuery once globally -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -1949,6 +1948,7 @@
 
 
 
+
     <script>
         $(document).ready(function() {
             // Initialize Select2 for elements inside modals
@@ -1982,7 +1982,6 @@
         });
     </script>
 
-
     <!-- Defaultmenu JS -->
     <script src="{{ asset('assets/js/defaultmenu.min.js') }}"></script>
 
@@ -2013,28 +2012,340 @@
     <!-- Custom-Switcher JS -->
     <script src="{{ asset('assets/js/custom-switcher.min.js') }}"></script>
 
-    <!-- Quill Editor JS -->
-    <script src="{{ asset('assets/libs/quill/quill.js') }}"></script>
+    <!-- Debug Command Handler -->
+    <script>
+        $(document).ready(function() {
+            // Network request tracking
+            let networkLogs = {
+                success: [],
+                error: []
+            };
 
-    <!-- Filepond JS -->
-    <script src="{{ asset('assets/libs/filepond/filepond.min.js') }}"></script>
-    <script src="{{ asset('assets/libs/filepond-plugin-image-preview/filepond-plugin-image-preview.min.js') }}"></script>
-    <script
-            src="{{ asset('assets/libs/filepond-plugin-image-exif-orientation/filepond-plugin-image-exif-orientation.min.js') }}">
-    </script>
-    <script src="{{ asset('assets/libs/filepond-plugin-file-validate-size/filepond-plugin-file-validate-size.min.js') }}">
-    </script>
-    <script src="{{ asset('assets/libs/filepond-plugin-file-encode/filepond-plugin-file-encode.min.js') }}"></script>
-    <script src="{{ asset('assets/libs/filepond-plugin-image-edit/filepond-plugin-image-edit.min.js') }}"></script>
-    <script src="{{ asset('assets/libs/filepond-plugin-file-validate-type/filepond-plugin-file-validate-type.min.js') }}">
-    </script>
-    <script src="{{ asset('assets/libs/filepond-plugin-image-crop/filepond-plugin-image-crop.min.js') }}"></script>
-    <script src="{{ asset('assets/libs/filepond-plugin-image-resize/filepond-plugin-image-resize.min.js') }}"></script>
-    <script src="{{ asset('assets/libs/filepond-plugin-image-transform/filepond-plugin-image-transform.min.js') }}">
+            // Override fetch and XMLHttpRequest to track network requests
+            const originalFetch = window.fetch;
+            window.fetch = async function(...args) {
+                try {
+                    const response = await originalFetch.apply(this, args);
+                    if (response.ok) {
+                        networkLogs.success.push({
+                            url: args[0],
+                            method: args[1]?.method || 'GET',
+                            timestamp: new Date().toISOString()
+                        });
+                    } else {
+                        networkLogs.error.push({
+                            url: args[0],
+                            method: args[1]?.method || 'GET',
+                            status: response.status,
+                            timestamp: new Date().toISOString()
+                        });
+                    }
+                    return response;
+                } catch (error) {
+                    networkLogs.error.push({
+                        url: args[0],
+                        method: args[1]?.method || 'GET',
+                        error: error.message,
+                        timestamp: new Date().toISOString()
+                    });
+                    throw error;
+                }
+            };
+
+            // Console logging
+            const originalConsoleLog = console.log;
+            const originalConsoleError = console.error;
+            let consoleLogs = [];
+            let consoleErrors = [];
+
+            console.log = function() {
+                consoleLogs.push({
+                    message: Array.from(arguments),
+                    timestamp: new Date().toISOString(),
+                    stack: new Error().stack
+                });
+                originalConsoleLog.apply(console, arguments);
+            };
+
+            console.error = function() {
+                consoleErrors.push({
+                    message: Array.from(arguments),
+                    timestamp: new Date().toISOString(),
+                    stack: new Error().stack
+                });
+                originalConsoleError.apply(console, arguments);
+            };
+
+            // Debug API
+            window.debugAPI = {
+                getConsoleLogs: () => consoleLogs,
+                getConsoleErrors: () => consoleErrors,
+                getNetworkErrorLogs: () => networkLogs.error,
+                getNetworkSuccessLogs: () => networkLogs.success,
+                takeScreenshot: async () => {
+                    try {
+                        const canvas = await html2canvas(document.body);
+                        return canvas.toDataURL('image/png');
+                    } catch (error) {
+                        console.error('Screenshot failed:', error);
+                        return null;
+                    }
+                },
+                getSelectedElement: () => {
+                    const selection = window.getSelection();
+                    return selection.rangeCount > 0 ? selection.getRangeAt(0).commonAncestorContainer : null;
+                },
+                clearLogs: () => {
+                    consoleLogs = [];
+                    consoleErrors = [];
+                    networkLogs = { success: [], error: [] };
+                }
+            };
+
+            // Initialize SimpleBar safely
+            function initializeSimpleBar() {
+                const elements = document.querySelectorAll('[data-simplebar]');
+                elements.forEach(element => {
+                    if (element && !element.SimpleBar) {
+                        try {
+                            new SimpleBar(element, {
+                                autoHide: false
+                            });
+                        } catch (error) {
+                            console.warn('SimpleBar initialization skipped for element:', element);
+                        }
+                    }
+                });
+            }
+
+            // Initialize Choices.js safely
+            function initializeChoices() {
+                const elements = document.querySelectorAll('.choices-select');
+                elements.forEach(element => {
+                    if (element && (element.tagName === 'SELECT' || element.tagName === 'INPUT')) {
+                        try {
+                            new Choices(element, {
+                                removeItemButton: true,
+                                searchEnabled: true,
+                                renderChoiceLimit: 5,
+                                position: 'bottom'
+                            });
+                        } catch (error) {
+                            console.warn('Choices initialization skipped for element:', element);
+                        }
+                    }
+                });
+            }
+
+            // Debug command handler
+            async function handleDebugCommand() {
+                try {
+                    Swal.fire({
+                        title: 'Gathering Debug Information',
+                        html: 'Please wait...',
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
+                    const screenshot = await window.debugAPI.takeScreenshot();
+                    const selectedElement = window.debugAPI.getSelectedElement();
+
+                    const debugInfo = {
+                        consoleLogs: window.debugAPI.getConsoleLogs().slice(-50),
+                        consoleErrors: window.debugAPI.getConsoleErrors().slice(-50),
+                        networkErrors: window.debugAPI.getNetworkErrorLogs().slice(-50),
+                        networkSuccess: window.debugAPI.getNetworkSuccessLogs().slice(-50),
+                        timestamp: new Date().toISOString(),
+                        userAgent: navigator.userAgent,
+                        screenResolution: `${window.screen.width}x${window.screen.height}`,
+                        selectedElement: selectedElement ? {
+                            tagName: selectedElement.tagName,
+                            className: selectedElement.className,
+                            id: selectedElement.id
+                        } : null
+                    };
+
+                    const formattedHtml = `
+                        <div class="debug-info">
+                            <div class="debug-section">
+                                <h6 class="mb-3">System Information</h6>
+                                <div class="system-info p-2 bg-light">
+                                    <div>User Agent: ${debugInfo.userAgent}</div>
+                                    <div>Screen Resolution: ${debugInfo.screenResolution}</div>
+                                    <div>Timestamp: ${debugInfo.timestamp}</div>
+                                </div>
+                            </div>
+
+                            <div class="debug-section mt-4">
+                                <h6 class="mb-3">Console Logs (Last 50)</h6>
+                                <div class="console-logs p-2 bg-light" style="max-height: 200px; overflow-y: auto;">
+                                    ${formatLogs(debugInfo.consoleLogs)}
+                                </div>
+                            </div>
+
+                            <div class="debug-section mt-4">
+                                <h6 class="mb-3">Console Errors (Last 50)</h6>
+                                <div class="console-errors p-2 bg-light" style="max-height: 200px; overflow-y: auto;">
+                                    ${formatLogs(debugInfo.consoleErrors)}
+                                </div>
+                            </div>
+
+                            <div class="debug-section mt-4">
+                                <h6 class="mb-3">Network Errors (Last 50)</h6>
+                                <div class="network-errors p-2 bg-light" style="max-height: 200px; overflow-y: auto;">
+                                    ${formatNetworkLogs(debugInfo.networkErrors)}
+                                </div>
+                            </div>
+
+                            ${screenshot ? `
+                                <div class="debug-section mt-4">
+                                    <h6 class="mb-3">Screenshot</h6>
+                                    <img src="${screenshot}" style="max-width: 100%; height: auto;" />
+                                </div>
+                            ` : ''}
+                        </div>
+                    `;
+
+                    Swal.fire({
+                        title: 'Debug Information',
+                        html: formattedHtml,
+                        width: '80%',
+                        confirmButtonText: 'Close',
+                        showCloseButton: true,
+                        customClass: {
+                            container: 'debug-modal'
+                        }
+                    });
+
+                } catch (error) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Debug Error',
+                        text: 'Failed to gather debug information: ' + error.message
+                    });
+                }
+            }
+
+            function formatLogs(logs) {
+                return logs.map(log => {
+                    const timestamp = new Date(log.timestamp).toLocaleTimeString();
+                    const message = Array.isArray(log.message) ? log.message.map(item => {
+                        if (typeof item === 'object') {
+                            return JSON.stringify(item, null, 2);
+                        }
+                        return item;
+                    }).join(' ') : log.message;
+
+                    return `
+                        <div class="log-entry border-bottom p-2">
+                            <span class="text-muted">[${timestamp}]</span>
+                            <pre class="mb-0">${message}</pre>
+                            ${log.stack ? `<details><summary>Stack</summary><pre class="text-muted">${log.stack}</pre></details>` : ''}
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            function formatNetworkLogs(logs) {
+                return logs.map(log => {
+                    const timestamp = new Date(log.timestamp).toLocaleTimeString();
+                    return `
+                        <div class="log-entry border-bottom p-2">
+                            <span class="text-muted">[${timestamp}]</span>
+                            <div>${log.method} ${log.url}</div>
+                            ${log.status ? `<div>Status: ${log.status}</div>` : ''}
+                            ${log.error ? `<div class="text-danger">Error: ${log.error}</div>` : ''}
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            // Initialize components safely
+            $(window).on('load', function() {
+                setTimeout(() => {
+                    initializeSimpleBar();
+                    initializeChoices();
+                }, 100);
+            });
+
+            // Debug command listener
+            let commandBuffer = '';
+            $(document).on('keypress', function(e) {
+                const key = String.fromCharCode(e.which);
+                commandBuffer += key;
+
+                if (commandBuffer.includes('/debug')) {
+                    e.preventDefault();
+                    handleDebugCommand();
+                    commandBuffer = '';
+                }
+
+                // Reset buffer after 2 seconds of inactivity
+                setTimeout(() => {
+                    commandBuffer = '';
+                }, 2000);
+            });
+        });
     </script>
 
-    <script src="{{ asset('assets/js/add-products.js') }}"></script>
+    <!-- Add html2canvas for screenshots -->
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 
+    <!-- Add required CSS for debug modal -->
+    <style>
+        .debug-modal .swal2-html-container {
+            text-align: left;
+        }
+        .debug-info pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-size: 0.875rem;
+        }
+        .log-entry {
+            font-family: monospace;
+            font-size: 0.875rem;
+        }
+        .system-info {
+            font-family: monospace;
+            font-size: 0.875rem;
+        }
+    </style>
+
+    <!-- Initialize components with error handling -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Safely initialize SimpleBar
+            const simplebarElements = document.querySelectorAll('[data-simplebar]');
+            simplebarElements.forEach(element => {
+                if (element && !element.SimpleBar) {
+                    try {
+                        new SimpleBar(element, {
+                            autoHide: false
+                        });
+                    } catch (error) {
+                        console.warn('SimpleBar initialization skipped for element:', element);
+                    }
+                }
+            });
+
+            // Safely initialize Choices
+            const choicesElements = document.querySelectorAll('select.choices-select, input.choices-select');
+            choicesElements.forEach(element => {
+                if (element && (element.tagName === 'SELECT' || element.tagName === 'INPUT')) {
+                    try {
+                        new Choices(element, {
+                            removeItemButton: true,
+                            searchEnabled: true
+                        });
+                    } catch (error) {
+                        console.warn('Choices initialization skipped for element:', element);
+                    }
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>
