@@ -13,6 +13,9 @@ use Spatie\Image\Image;
 use Spatie\Image\Enums\Fit;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\MachinesExport;
+use Yajra\DataTables\DataTables;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 
 class MachineController extends Controller
 {
@@ -157,61 +160,104 @@ class MachineController extends Controller
 
     public function machinestore(Request $request)
     {
-        $user_id = Auth::id();
+        try {
+            $validator = Validator::make($request->all(), [
+                'machine_code' => 'required|string|max:20|unique:machines,machine_code',
+                'name' => 'required|string|max:255',
+                'model_number' => 'nullable|string|max:191',
+                'serial_number' => 'nullable|string|max:191',
+                'manufacturer' => 'nullable|string|max:191',
+                'manufacturing_date' => 'nullable|date',
+                'purchase_date' => 'nullable|date',
+                'warranty_start_date' => 'nullable|date',
+                'warranty_end_date' => 'nullable|date|after_or_equal:warranty_start_date',
+                'purchase_price' => 'nullable|numeric|min:0|max:999999999999.99',
+                'current_value' => 'nullable|numeric|min:0|max:999999999999.99',
+                'branch_id' => 'required|exists:branches,id',
+                'location' => 'nullable|string|max:191',
+                'status' => 'required|in:active,maintenance,inactive,repair,scrapped',
+                'capacity' => 'nullable|numeric|min:0|max:9999999999.99',
+                'capacity_unit' => 'nullable|string|max:191',
+                'power_consumption' => 'nullable|numeric|min:0|max:9999999999.99',
+                'power_unit' => 'nullable|string|max:191',
+                'operating_pressure' => 'nullable|numeric|min:0|max:9999999999.99',
+                'pressure_unit' => 'nullable|string|max:191',
+                'operating_temperature' => 'nullable|numeric|min:0|max:9999999999.99',
+                'temperature_unit' => 'nullable|string|max:191',
+                'specifications' => 'nullable|json',
+                'maintenance_schedule' => 'nullable|json',
+                'spare_parts' => 'nullable|json',
+                'documents' => 'nullable|json',
+                'notes' => 'nullable|string',
+                'metadata' => 'nullable|json',
+                'machine_profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+            ]);
 
-        // Validation Rules
-        $request->validate([
-            'machine_profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'machine_name' => 'required|string|max:255',
-            'machine_type' => 'nullable|string|max:255',
-            'machine_capacity' => 'nullable|integer',
-            'branch_id' => 'nullable|exists:branches,id', // Ensure branch_id exists in branches table
-        ]);
-
-
-        $unique_code = [
-            'table' => 'machines',
-            'field' => 'machine_unique_code',
-            'length' => 8,
-            'prefix' => 'MAC'
-        ];
-        $machine_unique_code = IdGenerator::generate($unique_code);
-
-        $machineProfilePicture = null;  // Initialize
-
-        // Handle image upload using Spatie Image
-        if ($request->hasFile('machine_profile_picture')) {
-            $image = $request->file('machine_profile_picture');
-            $imageName = time() . '_' . $image->getClientOriginalName();
-            $imagePath = $image->storeAs('public/machine-logos', $imageName); // Store in public/storage
-
-            // Use Storage facade to get the full path for Spatie Image
-            $fullImagePath = Storage::path($imagePath);
-
-
-            if (Storage::exists($imagePath)) {
-                // Process image using Spatie
-                Image::load($fullImagePath)
-                    ->fit(Fit::Crop, 300, 300)
-                    ->save();
-
-                $machineProfilePicture = 'storage/machine-logos/' . $imageName;
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => 422,
+                    'errors' => $validator->errors()
+                ], 422);
             }
+
+            DB::beginTransaction();
+
+            // Handle file upload
+            $machineProfilePicture = null;
+            if ($request->hasFile('machine_profile_picture')) {
+                $file = $request->file('machine_profile_picture');
+                $fileName = time() . '_' . $file->getClientOriginalName();
+                $file->move(public_path('uploads/machines'), $fileName);
+                $machineProfilePicture = 'uploads/machines/' . $fileName;
+            }
+
+            // Create machine
+            $machine = Machine::create([
+                'machine_code' => $request->machine_code,
+                'name' => $request->name,
+                'model_number' => $request->model_number,
+                'serial_number' => $request->serial_number,
+                'manufacturer' => $request->manufacturer,
+                'manufacturing_date' => $request->manufacturing_date,
+                'purchase_date' => $request->purchase_date,
+                'warranty_start_date' => $request->warranty_start_date,
+                'warranty_end_date' => $request->warranty_end_date,
+                'purchase_price' => $request->purchase_price,
+                'current_value' => $request->current_value,
+                'branch_id' => $request->branch_id,
+                'location' => $request->location,
+                'status' => $request->status,
+                'capacity' => $request->capacity,
+                'capacity_unit' => $request->capacity_unit,
+                'power_consumption' => $request->power_consumption,
+                'power_unit' => $request->power_unit,
+                'operating_pressure' => $request->operating_pressure,
+                'pressure_unit' => $request->pressure_unit,
+                'operating_temperature' => $request->operating_temperature,
+                'temperature_unit' => $request->temperature_unit,
+                'specifications' => $request->specifications,
+                'maintenance_schedule' => $request->maintenance_schedule,
+                'spare_parts' => $request->spare_parts,
+                'documents' => $request->documents,
+                'notes' => $request->notes,
+                'metadata' => $request->metadata,
+                'machine_profile_picture' => $machineProfilePicture
+            ]);
+
+            DB::commit();
+
+            return response()->json([
+                'status' => 200,
+                'message' => 'Machine added successfully'
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::error('Error in MachineController@machinestore: ' . $e->getMessage());
+            return response()->json([
+                'status' => 500,
+                'message' => 'An error occurred while adding the machine'
+            ], 500);
         }
-
-        $machineData = [
-            'machine_unique_code' => $machine_unique_code,
-            'machine_profile_picture' => $machineProfilePicture,
-            'machine_name' => $request->machine_name,
-            'machine_type' => $request->machine_type,
-            'machine_capacity' => $request->machine_capacity,
-            'branch_id' => $request->branch_id,
-            'user_id' => $user_id,
-        ];
-
-        Machine::create($machineData);
-
-        return response()->json(['status' => 200, 'message' => 'Machine added successfully']);
     }
 
     public function machineedit(Request $request)
@@ -311,5 +357,99 @@ class MachineController extends Controller
         return Excel::download(new MachinesExport, 'machines_export_'.date('Y-m-d').'.xlsx', \Maatwebsite\Excel\Excel::XLSX, [
             'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         ]);
+    }
+
+    public function getData(Request $request)
+    {
+        try {
+            $query = Machine::with(['branch'])
+                ->select('machines.*');
+
+            if ($request->filled('date_filter')) {
+                $query->filterByDate($request->date_filter);
+            }
+
+            return DataTables::of($query)
+                ->addIndexColumn()
+                ->addColumn('machine_details', function ($row) {
+                    $logo = $row->machine_profile_picture ? $row->machine_profile_picture : asset('assets/images/company-logos/8.png');
+                    return '
+                        <div class="d-flex align-items-center">
+                            <span class="avatar avatar-sm me-2">
+                                <img src="' . $logo . '" alt="Machine Logo">
+                            </span>
+                            <div>
+                                <h6 class="mb-0">' . $row->name . '</h6>
+                                <small class="text-muted">' . $row->machine_code . '</small>
+                            </div>
+                        </div>';
+                })
+                ->addColumn('technical_details', function ($row) {
+                    return '
+                        <div>
+                            <div><small class="text-muted">Model:</small> ' . ($row->model_number ?? 'N/A') . '</div>
+                            <div><small class="text-muted">Capacity:</small> ' .
+                                ($row->capacity ? $row->capacity . ' ' . $row->capacity_unit : 'N/A') . '</div>
+                        </div>';
+                })
+                ->addColumn('location_details', function ($row) {
+                    return '
+                        <div>
+                            <div><small class="text-muted">Branch:</small> ' . ($row->branch ? $row->branch->branch_name : 'N/A') . '</div>
+                            <div><small class="text-muted">Location:</small> ' . ($row->location ?? 'N/A') . '</div>
+                        </div>';
+                })
+                ->addColumn('status', function ($row) {
+                    $colors = [
+                        'active' => 'success',
+                        'maintenance' => 'warning',
+                        'inactive' => 'danger',
+                        'repair' => 'info',
+                        'scrapped' => 'secondary'
+                    ];
+                    $color = $colors[$row->status] ?? 'primary';
+                    return '<span class="badge bg-' . $color . '">' . ucfirst($row->status) . '</span>';
+                })
+                ->addColumn('warranty', function ($row) {
+                    if (!$row->warranty_end_date) {
+                        return '<span class="badge bg-secondary">No Warranty</span>';
+                    }
+                    $endDate = \Carbon\Carbon::parse($row->warranty_end_date);
+                    $color = $endDate->isFuture() ? 'success' : 'danger';
+                    $status = $endDate->isFuture() ? 'Active' : 'Expired';
+                    return '<span class="badge bg-' . $color . '">' . $status . '</span>';
+                })
+                ->addColumn('action', function ($row) {
+                    return '<div class="btn-list">
+                            <a data-bs-toggle="offcanvas"
+                               href="#viewMachineDataModal"
+                               role="button"
+                               aria-controls="viewMachineDataModal"
+                               class="btn btn-sm btn-primary-light btn-icon ViewDataIcon"
+                               id="' . $row->id . '"
+                               data-tippy-content="View Details">
+                                <i class="ri-eye-line"></i>
+                            </a>
+                            <a href="#"
+                               id="' . $row->id . '"
+                               class="btn btn-sm btn-info-light btn-icon EditDataIcon"
+                               data-bs-toggle="modal"
+                               data-bs-target="#editMachineDataModal"
+                               data-tippy-content="Edit Machine">
+                                <i class="ri-pencil-line"></i>
+                            </a>
+                            <button class="btn btn-sm btn-danger-light btn-icon DeleteDataIcon"
+                                    id="' . $row->id . '"
+                                    data-tippy-content="Delete Machine">
+                                <i class="ri-delete-bin-line"></i>
+                            </button>
+                        </div>';
+                })
+                ->rawColumns(['machine_details', 'technical_details', 'location_details', 'status', 'warranty', 'action'])
+                ->make(true);
+        } catch (\Exception $e) {
+            \Log::error('Error in MachineController@getData: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to fetch machines data'], 500);
+        }
     }
 }

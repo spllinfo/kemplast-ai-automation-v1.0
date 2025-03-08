@@ -216,7 +216,7 @@
                                                         <div class="row gy-3">
                                                             <!-- Basic Information -->
                                                             <div class="col-xl-12">
-                                                                <label for="part_name" class="form-label">Part Name</label>
+                                                                <label for="part_name" class="form-label">Part Name <span class="text-danger">*</span></label>
                                                                 <input type="text" class="form-control" name="part_name" placeholder="Enter Part Name" required>
                                                             </div>
 
@@ -234,7 +234,7 @@
                                                                 <select class="form-control" data-trigger name="part_category">
                                                                     <option value="">Select Category</option>
                                                                     <option value="Garbage Bags">Garbage Bags</option>
-                                                                    <option value="LD Plain Bags 10x12s">LD Plain Bags 10x12s</option>
+                                                                    <option value="LD Plain Bags">LD Plain Bags</option>
                                                                     <option value="Food Packaging">Food Packaging</option>
                                                                     <option value="Industrial Packaging">Industrial Packaging</option>
                                                                     <option value="Agricultural Bags">Agricultural Bags</option>
@@ -251,6 +251,10 @@
                                                                 <label for="hsn_no" class="form-label">HSN No</label>
                                                                 <input type="text" class="form-control" name="hsn_no" placeholder="Enter HSN No">
                                                             </div>
+                                                            <div class="col-xl-6">
+                                                                <label for="reel_size" class="form-label">Reel Size</label>
+                                                                <input type="text" class="form-control" name="reel_size" placeholder="Enter Reel Size">
+                                                            </div>
 
                                                             <!-- Part Dimensions -->
                                                             <div class="col-12">
@@ -258,19 +262,19 @@
                                                             </div>
                                                             <div class="col-xl-3">
                                                                 <label for="part_length" class="form-label">Length</label>
-                                                                <input type="number" class="form-control" name="part_length" placeholder="Length">
+                                                                <input type="number" step="0.001" class="form-control" name="part_length" placeholder="Length">
                                                             </div>
                                                             <div class="col-xl-3">
                                                                 <label for="part_width" class="form-label">Width</label>
-                                                                <input type="number" class="form-control" name="part_width" placeholder="Width">
+                                                                <input type="number" step="0.001" class="form-control" name="part_width" placeholder="Width">
                                                             </div>
                                                             <div class="col-xl-3">
                                                                 <label for="part_height" class="form-label">Height</label>
-                                                                <input type="number" class="form-control" name="part_height" placeholder="Height">
+                                                                <input type="number" step="0.001" class="form-control" name="part_height" placeholder="Height">
                                                             </div>
                                                             <div class="col-xl-3">
                                                                 <label for="part_thickness" class="form-label">Thickness</label>
-                                                                <input type="number" class="form-control" name="part_thickness" placeholder="Thickness">
+                                                                <input type="number" step="0.001" class="form-control" name="part_thickness" placeholder="Thickness">
                                                             </div>
 
                                                             <!-- Material Ratios -->
@@ -279,45 +283,66 @@
                                                             </div>
                                                             <div class="col-xl-3">
                                                                 <label for="part_ld_ratio" class="form-label">LD Ratio</label>
-                                                                <input type="number" class="form-control" name="part_ld_ratio" placeholder="Enter LD Mixing Ratio">
+                                                                <input type="number" step="0.001" max="100" class="form-control" name="part_ld_ratio" placeholder="Enter LD Mixing Ratio">
                                                             </div>
                                                             <div class="col-xl-3">
                                                                 <label for="part_lld_ratio" class="form-label">LLD Ratio</label>
-                                                                <input type="number" class="form-control" name="part_lld_ratio" placeholder="Enter LLD Mixing Ratio">
+                                                                <input type="number" step="0.001" max="100" class="form-control" name="part_lld_ratio" placeholder="Enter LLD Mixing Ratio">
                                                             </div>
                                                             <div class="col-xl-3">
                                                                 <label for="part_hd_ratio" class="form-label">HD Ratio</label>
-                                                                <input type="number" class="form-control" name="part_hd_ratio" placeholder="Enter HD Mixing Ratio">
+                                                                <input type="number" step="0.001" max="100" class="form-control" name="part_hd_ratio" placeholder="Enter HD Mixing Ratio">
                                                             </div>
                                                             <div class="col-xl-3">
                                                                 <label for="part_rd_ratio" class="form-label">RD Ratio</label>
-                                                                <input type="number" class="form-control" name="part_rd_ratio" placeholder="Enter RD Mixing Ratio">
+                                                                <input type="number" step="0.001" max="100" class="form-control" name="part_rd_ratio" placeholder="Enter RD Mixing Ratio">
                                                             </div>
 
                                                             <!-- Part Properties -->
                                                             <div class="col-12">
                                                                 <h5 class="mt-3">Properties</h5>
                                                             </div>
-                                                            <div class="col-xl-6">
+                                                            <div class="col-xl-4">
                                                                 <label for="part_weight" class="form-label">Item Weight (in grams)</label>
-                                                                <input type="number" class="form-control" name="part_weight" placeholder="Weight in grams">
+                                                                <input type="number" step="0.001" class="form-control" name="part_weight" placeholder="Weight in grams">
                                                             </div>
-                                                            <div class="col-xl-6">
-                                                                <label for="part_no_sealing_type" class="form-label">Sealing Type</label>
-                                                                <select class="form-control" data-trigger name="part_no_sealing_type">
+                                                            <div class="col-xl-4">
+                                                                <label for="part_price" class="form-label">Price (₹)</label>
+                                                                <input type="number" step="0.01" class="form-control" name="part_price" placeholder="Enter Price">
+                                                            </div>
+                                                            <div class="col-xl-4">
+                                                                <label for="no_ups" class="form-label">No. of Ups</label>
+                                                                <input type="number" min="1" class="form-control" name="no_ups" placeholder="Enter No. of Ups">
+                                                            </div>
+
+                                                            <div class="col-xl-4">
+                                                                <label for="sealing_type" class="form-label">Sealing Type</label>
+                                                                <select class="form-control" name="sealing_type">
                                                                     <option value="">Select</option>
                                                                     <option value="Side Seal">Side Seal</option>
                                                                     <option value="Bottom Seal">Bottom Seal</option>
                                                                     <option value="Center Seal">Center Seal</option>
                                                                 </select>
                                                             </div>
-                                                            <div class="col-xl-6">
-                                                                <label for="printing_status" class="form-label">Printing</label>
-                                                                <select class="form-control" name="printing_status">
-                                                                    <option value="0">No</option>
-                                                                    <option value="1">Yes</option>
-                                                                </select>
+
+                                                            <div class="col-xl-4">
+                                                                <label for="bundle_qty" class="form-label">Bundle Quantity</label>
+                                                                <input type="number" class="form-control" name="bundle_qty" placeholder="Bundle Quantity">
                                                             </div>
+
+                                                            <div class="col-xl-4">
+                                                                <label for="part_quantity" class="form-label">Stock Quantity</label>
+                                                                <input type="number" class="form-control" name="part_quantity" placeholder="Stock Quantity">
+                                                            </div>
+
+                                                            <div class="col-xl-6">
+                                                                <label for="printing_status" class="form-label d-block">Printing Status</label>
+                                                                <div class="form-check form-check-inline">
+                                                                    <input type="checkbox" class="form-check-input" name="printing_status" id="printing_status">
+                                                                    <label class="form-check-label" for="printing_status">Enable Printing</label>
+                                                                </div>
+                                                            </div>
+
                                                             <div class="col-xl-6">
                                                                 <label for="printing_colour" class="form-label">Printing Colors</label>
                                                                 <select class="form-control" name="printing_colour" multiple>
@@ -329,23 +354,6 @@
                                                                     <option value="Green">Green</option>
                                                                     <option value="Blue">Blue</option>
                                                                 </select>
-                                                            </div>
-
-                                                            <div class="col-xl-6">
-                                                                <label for="part_status" class="form-label">Availability</label>
-                                                                <select class="form-control" name="part_status">
-                                                                    <option value="active">In Stock</option>
-                                                                    <option value="inactive">Out Of Stock</option>
-                                                                    <option value="discontinued">Discontinued</option>
-                                                                </select>
-                                                            </div>
-                                                            <div class="col-xl-6">
-                                                                <label for="bundle_qty" class="form-label">Bundle Quantity</label>
-                                                                <input type="number" class="form-control" name="bundle_qty" placeholder="Bundle Quantity">
-                                                            </div>
-                                                            <div class="col-xl-6">
-                                                                <label for="part_price" class="form-label">Actual Price</label>
-                                                                <input type="number" class="form-control" name="part_price" placeholder="Actual Price">
                                                             </div>
                                                         </div>
                                                     </div>
@@ -362,19 +370,23 @@
                                                             </div>
 
                                                             <div class="col-xl-12 product-documents-container">
-                                                                <p class="fw-medium mb-2 fs-14">Part Images</p>
-                                                                <input type="file" class="form-control" name="part_profile_picture">
+                                                                <p class="fw-medium mb-2 fs-14">Part Image</p>
+                                                                <input type="file" class="form-control" name="part_profile_picture" accept="image/*">
                                                                 <label class="form-label text-muted mt-2 fw-normal fs-12">Upload main image of the part</label>
-                                                            </div>
-
-                                                            <div class="col-xl-12 product-documents-container">
-                                                                <p class="fw-medium mb-2 fs-14">Additional Documents</p>
-                                                                <textarea class="form-control" name="part_documents" rows="3" placeholder="Links to documents or document descriptions"></textarea>
                                                             </div>
 
                                                             <div class="col-xl-12">
                                                                 <label for="part_tags" class="form-label">Part Tags</label>
                                                                 <input type="text" class="form-control" name="part_tags" placeholder="Enter Part Tags (comma separated)">
+                                                            </div>
+
+                                                            <div class="col-xl-12">
+                                                                <label for="status" class="form-label">Status</label>
+                                                                <select class="form-control" name="status" required>
+                                                                    <option value="active">Active</option>
+                                                                    <option value="inactive">Inactive</option>
+                                                                    <option value="archived">Archived</option>
+                                                                </select>
                                                             </div>
 
                                                             <!-- Branch Assignment -->
@@ -387,79 +399,87 @@
                                                                     @endforeach
                                                                 </select>
                                                             </div>
+
+                                                            <!-- Material & Printing Properties Toggles -->
+                                                            <div class="col-12">
+                                                                <h5 class="mt-3">Material Properties</h5>
+                                                            </div>
+                                                            <div class="col-xl-4">
+                                                                <div class="custom-toggle-switch d-flex align-items-center mb-4">
+                                                                    <input id="BST" name="bst" type="checkbox" value="1">
+                                                                    <label for="BST" class="label-primary"></label>
+                                                                    <span class="ms-3">BST</span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-xl-4">
+                                                                <div class="custom-toggle-switch d-flex align-items-center mb-4">
+                                                                    <input id="Plain" name="plain" type="checkbox" value="1">
+                                                                    <label for="Plain" class="label-primary"></label>
+                                                                    <span class="ms-3">Plain</span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-xl-4">
+                                                                <div class="custom-toggle-switch d-flex align-items-center mb-4">
+                                                                    <input id="Flat" name="flat" type="checkbox" value="1">
+                                                                    <label for="Flat" class="label-primary"></label>
+                                                                    <span class="ms-3">Flat</span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-xl-4">
+                                                                <div class="custom-toggle-switch d-flex align-items-center mb-4">
+                                                                    <input id="Gazzate" name="gazzate" type="checkbox" value="1">
+                                                                    <label for="Gazzate" class="label-primary"></label>
+                                                                    <span class="ms-3">Gazzate</span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-xl-4">
+                                                                <div class="custom-toggle-switch d-flex align-items-center mb-4">
+                                                                    <input id="BIO" name="bio" type="checkbox" value="1">
+                                                                    <label for="BIO" class="label-primary"></label>
+                                                                    <span class="ms-3">Bio</span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-xl-4">
+                                                                <div class="custom-toggle-switch d-flex align-items-center mb-4">
+                                                                    <input id="NORMAL" name="normal" type="checkbox" value="1">
+                                                                    <label for="NORMAL" class="label-primary"></label>
+                                                                    <span class="ms-3">Normal</span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-xl-4">
+                                                                <div class="custom-toggle-switch d-flex align-items-center mb-4">
+                                                                    <input id="Milky" name="milky" type="checkbox" value="1">
+                                                                    <label for="Milky" class="label-primary"></label>
+                                                                    <span class="ms-3">Milky</span>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="col-12">
+                                                                <h5 class="mt-3">Printing Properties</h5>
+                                                            </div>
+                                                            <div class="col-xl-4">
+                                                                <div class="custom-toggle-switch d-flex align-items-center mb-4">
+                                                                    <input id="Roto" name="roto_printing" type="checkbox" value="1">
+                                                                    <label for="Roto" class="label-primary"></label>
+                                                                    <span class="ms-3">Roto Printing</span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-xl-4">
+                                                                <div class="custom-toggle-switch d-flex align-items-center mb-4">
+                                                                    <input id="Flexo" name="flexo_printing" type="checkbox" value="1">
+                                                                    <label for="Flexo" class="label-primary"></label>
+                                                                    <span class="ms-3">Flexo Printing</span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-xl-4">
+                                                                <div class="custom-toggle-switch d-flex align-items-center mb-4">
+                                                                    <input id="Recyle" name="recycle_logo" type="checkbox" value="1">
+                                                                    <label for="Recyle" class="label-primary"></label>
+                                                                    <span class="ms-3">Recycle Logo</span>
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <!-- Material & Printing Properties Toggles -->
-                                        <hr>
-                                        <div class="row">
-                                            <div class="col-xl-3">
-                                                <div class="custom-toggle-switch d-flex align-items-center mb-4">
-                                                    <input id="BST" name="bst" type="checkbox" value="1">
-                                                    <label for="BST" class="label-primary"></label><span class="ms-3">BST</span>
-                                                </div>
-                                            </div>
-                                            <div class="col-xl-3">
-                                                <div class="custom-toggle-switch d-flex align-items-center mb-4">
-                                                    <input id="Plain" name="plain" type="checkbox" value="1">
-                                                    <label for="Plain" class="label-primary"></label><span class="ms-3">Plain</span>
-                                                </div>
-                                            </div>
-                                            <div class="col-xl-3">
-                                                <div class="custom-toggle-switch d-flex align-items-center mb-4">
-                                                    <input id="Flat" name="flat" type="checkbox" value="1">
-                                                    <label for="Flat" class="label-primary"></label><span class="ms-3">Flat</span>
-                                                </div>
-                                            </div>
-                                            <div class="col-xl-3">
-                                                <div class="custom-toggle-switch d-flex align-items-center mb-4">
-                                                    <input id="Gazzate" name="gazzate" type="checkbox" value="1">
-                                                    <label for="Gazzate" class="label-primary"></label><span class="ms-3">Gazzate</span>
-                                                </div>
-                                            </div>
-                                            <div class="col-xl-3">
-                                                <div class="custom-toggle-switch d-flex align-items-center mb-4">
-                                                    <input id="BIO" name="bio" type="checkbox" value="1">
-                                                    <label for="BIO" class="label-primary"></label><span class="ms-3">Bio</span>
-                                                </div>
-                                            </div>
-                                            <div class="col-xl-3">
-                                                <div class="custom-toggle-switch d-flex align-items-center mb-4">
-                                                    <input id="NORMAL" name="normal" type="checkbox" value="1">
-                                                    <label for="NORMAL" class="label-primary"></label><span class="ms-3">Normal</span>
-                                                </div>
-                                            </div>
-                                            <div class="col-xl-3">
-                                                <div class="custom-toggle-switch d-flex align-items-center mb-4">
-                                                    <input id="Milky" name="milky" type="checkbox" value="1">
-                                                    <label for="Milky" class="label-primary"></label><span class="ms-3">Milky</span>
-                                                </div>
-                                            </div>
-                                            <div class="col-xl-3">
-                                                <div class="custom-toggle-switch d-flex align-items-center mb-4">
-                                                    <input id="Roto" name="roto_printing" type="checkbox" value="1">
-                                                    <label for="Roto" class="label-primary"></label><span class="ms-3">Roto Printing</span>
-                                                </div>
-                                            </div>
-                                            <div class="col-xl-3">
-                                                <div class="custom-toggle-switch d-flex align-items-center mb-4">
-                                                    <input id="Flexo" name="flexo_printing" type="checkbox" value="1">
-                                                    <label for="Flexo" class="label-primary"></label><span class="ms-3">Flexo Printing</span>
-                                                </div>
-                                            </div>
-                                            <div class="col-xl-3">
-                                                <div class="custom-toggle-switch d-flex align-items-center mb-4">
-                                                    <input id="Sideseal" name="sideseal" type="checkbox" value="1">
-                                                    <label for="Sideseal" class="label-primary"></label><span class="ms-3">Sideseal</span>
-                                                </div>
-                                            </div>
-                                            <div class="col-xl-3">
-                                                <div class="custom-toggle-switch d-flex align-items-center mb-4">
-                                                    <input id="Recyle" name="recycle_logo" type="checkbox" value="1">
-                                                    <label for="Recyle" class="label-primary"></label><span class="ms-3">Recycle Logo</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -512,26 +532,26 @@
                                                   <div class="row gy-3">
                                                       <!-- Basic Information -->
                                                       <div class="col-xl-12">
-                                                          <label for="part_name_edit" class="form-label">Part Name</label>
+                                                          <label for="part_name_edit" class="form-label">Part Name <span class="text-danger">*</span></label>
                                                           <input type="text" class="form-control" name="part_name" id="part_name_edit" placeholder="Enter Part Name" required>
                                                       </div>
-                                                      <div class="col-xl-6">
-                                                          <label for="part_customer_name_edit" class="form-label">Customer Code</label>
-                                                          <select class="form-control" data-trigger name="part_customer_name" id="part_customer_name_edit">
-                                                              <option value="">Select Customer</option>
-                                                              <option value="C021224 - TVS Motors">C021224 - TVS Motors</option>
-                                                              <option value="C032645 - Yamaha Engines">C032645 - Yamaha Engines</option>
-                                                              <option value="C045678 - Puma">C045678 - Puma</option>
-                                                              <option value="C054321 - Spykar">C054321 - Spykar</option>
-                                                              <option value="C067890 - Mufti">C067890 - Mufti</option>
+
+                                                      <div class="col-xl-12">
+                                                          <label class="form-label">Customer</label>
+                                                          <select class="form-control" name="customer_id" id="customer_id_edit">
+                                                              <option value="">Select Customer (Optional)</option>
+                                                              @foreach ($customers as $customer)
+                                                                  <option value="{{ $customer->id }}">{{ $customer->customer_unique_code }}- {{ $customer->company_name }}</option>
+                                                              @endforeach
                                                           </select>
                                                       </div>
+
                                                       <div class="col-xl-6">
                                                           <label for="part_category_edit" class="form-label">Category</label>
                                                           <select class="form-control" data-trigger name="part_category" id="part_category_edit">
                                                               <option value="">Select Category</option>
                                                               <option value="Garbage Bags">Garbage Bags</option>
-                                                              <option value="LD Plain Bags 10x12s">LD Plain Bags 10x12s</option>
+                                                              <option value="LD Plain Bags">LD Plain Bags</option>
                                                               <option value="Food Packaging">Food Packaging</option>
                                                               <option value="Industrial Packaging">Industrial Packaging</option>
                                                               <option value="Agricultural Bags">Agricultural Bags</option>
@@ -540,13 +560,20 @@
                                                               <option value="Biodegradable Bags">Biodegradable Bags</option>
                                                           </select>
                                                       </div>
+
                                                       <div class="col-xl-6">
                                                           <label for="part_model_edit" class="form-label">Part Type</label>
                                                           <input type="text" class="form-control" name="part_model" id="part_model_edit" placeholder="Enter Part Type">
                                                       </div>
+
                                                       <div class="col-xl-6">
                                                           <label for="hsn_no_edit" class="form-label">HSN No</label>
                                                           <input type="text" class="form-control" name="hsn_no" id="hsn_no_edit" placeholder="Enter HSN No">
+                                                      </div>
+
+                                                      <div class="col-xl-6">
+                                                          <label for="reel_size_edit" class="form-label">Reel Size</label>
+                                                          <input type="text" class="form-control" name="reel_size" id="reel_size_edit" placeholder="Enter Reel Size">
                                                       </div>
 
                                                       <!-- Part Dimensions -->
@@ -555,19 +582,19 @@
                                                       </div>
                                                       <div class="col-xl-3">
                                                           <label for="part_length_edit" class="form-label">Length</label>
-                                                          <input type="number" class="form-control" name="part_length" id="part_length_edit" placeholder="Length">
+                                                          <input type="number" step="0.001" class="form-control" name="part_length" id="part_length_edit" placeholder="Length">
                                                       </div>
                                                       <div class="col-xl-3">
                                                           <label for="part_width_edit" class="form-label">Width</label>
-                                                          <input type="number" class="form-control" name="part_width" id="part_width_edit" placeholder="Width">
+                                                          <input type="number" step="0.001" class="form-control" name="part_width" id="part_width_edit" placeholder="Width">
                                                       </div>
                                                       <div class="col-xl-3">
                                                           <label for="part_height_edit" class="form-label">Height</label>
-                                                          <input type="number" class="form-control" name="part_height" id="part_height_edit" placeholder="Height">
+                                                          <input type="number" step="0.001" class="form-control" name="part_height" id="part_height_edit" placeholder="Height">
                                                       </div>
                                                       <div class="col-xl-3">
                                                           <label for="part_thickness_edit" class="form-label">Thickness</label>
-                                                          <input type="number" class="form-control" name="part_thickness" id="part_thickness_edit" placeholder="Thickness">
+                                                          <input type="number" step="0.001" class="form-control" name="part_thickness" id="part_thickness_edit" placeholder="Thickness">
                                                       </div>
 
                                                       <!-- Material Ratios -->
@@ -576,45 +603,66 @@
                                                       </div>
                                                       <div class="col-xl-3">
                                                           <label for="part_ld_ratio_edit" class="form-label">LD Ratio</label>
-                                                          <input type="number" class="form-control" name="part_ld_ratio" id="part_ld_ratio_edit" placeholder="Enter LD Mixing Ratio">
+                                                          <input type="number" step="0.001" max="100" class="form-control" name="part_ld_ratio" id="part_ld_ratio_edit" placeholder="Enter LD Mixing Ratio">
                                                       </div>
                                                       <div class="col-xl-3">
                                                           <label for="part_lld_ratio_edit" class="form-label">LLD Ratio</label>
-                                                          <input type="number" class="form-control" name="part_lld_ratio" id="part_lld_ratio_edit" placeholder="Enter LLD Mixing Ratio">
+                                                          <input type="number" step="0.001" max="100" class="form-control" name="part_lld_ratio" id="part_lld_ratio_edit" placeholder="Enter LLD Mixing Ratio">
                                                       </div>
                                                       <div class="col-xl-3">
                                                           <label for="part_hd_ratio_edit" class="form-label">HD Ratio</label>
-                                                          <input type="number" class="form-control" name="part_hd_ratio" id="part_hd_ratio_edit" placeholder="Enter HD Mixing Ratio">
+                                                          <input type="number" step="0.001" max="100" class="form-control" name="part_hd_ratio" id="part_hd_ratio_edit" placeholder="Enter HD Mixing Ratio">
                                                       </div>
                                                       <div class="col-xl-3">
                                                           <label for="part_rd_ratio_edit" class="form-label">RD Ratio</label>
-                                                          <input type="number" class="form-control" name="part_rd_ratio" id="part_rd_ratio_edit" placeholder="Enter RD Mixing Ratio">
+                                                          <input type="number" step="0.001" max="100" class="form-control" name="part_rd_ratio" id="part_rd_ratio_edit" placeholder="Enter RD Mixing Ratio">
                                                       </div>
 
                                                       <!-- Part Properties -->
                                                       <div class="col-12">
                                                           <h5 class="mt-3">Properties</h5>
                                                       </div>
-                                                      <div class="col-xl-6">
+                                                      <div class="col-xl-4">
                                                           <label for="part_weight_edit" class="form-label">Item Weight (in grams)</label>
-                                                          <input type="number" class="form-control" name="part_weight" id="part_weight_edit" placeholder="Weight in grams">
+                                                          <input type="number" step="0.001" class="form-control" name="part_weight" id="part_weight_edit" placeholder="Weight in grams">
                                                       </div>
-                                                      <div class="col-xl-6">
-                                                          <label for="part_no_sealing_type_edit" class="form-label">Sealing Type</label>
-                                                          <select class="form-control" data-trigger name="part_no_sealing_type" id="part_no_sealing_type_edit">
+                                                      <div class="col-xl-4">
+                                                          <label for="part_price_edit" class="form-label">Price (₹)</label>
+                                                          <input type="number" step="0.01" class="form-control" name="part_price" id="part_price_edit" placeholder="Enter Price">
+                                                      </div>
+                                                      <div class="col-xl-4">
+                                                          <label for="no_ups_edit" class="form-label">No. of Ups</label>
+                                                          <input type="number" min="1" class="form-control" name="no_ups" id="no_ups_edit" placeholder="Enter No. of Ups">
+                                                      </div>
+
+                                                      <div class="col-xl-4">
+                                                          <label for="sealing_type_edit" class="form-label">Sealing Type</label>
+                                                          <select class="form-control" name="sealing_type" id="sealing_type_edit">
                                                               <option value="">Select</option>
                                                               <option value="Side Seal">Side Seal</option>
                                                               <option value="Bottom Seal">Bottom Seal</option>
                                                               <option value="Center Seal">Center Seal</option>
                                                           </select>
                                                       </div>
-                                                      <div class="col-xl-6">
-                                                          <label for="printing_status_edit" class="form-label">Printing</label>
-                                                          <select class="form-control" name="printing_status" id="printing_status_edit">
-                                                              <option value="0">No</option>
-                                                              <option value="1">Yes</option>
-                                                          </select>
+
+                                                      <div class="col-xl-4">
+                                                          <label for="bundle_qty_edit" class="form-label">Bundle Quantity</label>
+                                                          <input type="number" class="form-control" name="bundle_qty" id="bundle_qty_edit" placeholder="Bundle Quantity">
                                                       </div>
+
+                                                      <div class="col-xl-4">
+                                                          <label for="part_quantity_edit" class="form-label">Stock Quantity</label>
+                                                          <input type="number" class="form-control" name="part_quantity" id="part_quantity_edit" placeholder="Stock Quantity">
+                                                      </div>
+
+                                                      <div class="col-xl-6">
+                                                          <label for="printing_status_edit" class="form-label d-block">Printing Status</label>
+                                                          <div class="form-check form-check-inline">
+                                                              <input type="checkbox" class="form-check-input" name="printing_status" id="printing_status_edit">
+                                                              <label class="form-check-label" for="printing_status_edit">Enable Printing</label>
+                                                          </div>
+                                                      </div>
+
                                                       <div class="col-xl-6">
                                                           <label for="printing_colour_edit" class="form-label">Printing Colors</label>
                                                           <select class="form-control" name="printing_colour" id="printing_colour_edit" multiple>
@@ -626,23 +674,6 @@
                                                               <option value="Green">Green</option>
                                                               <option value="Blue">Blue</option>
                                                           </select>
-                                                      </div>
-
-                                                      <div class="col-xl-6">
-                                                          <label for="part_status_edit" class="form-label">Availability</label>
-                                                          <select class="form-control" name="part_status" id="part_status_edit">
-                                                              <option value="active">In Stock</option>
-                                                              <option value="inactive">Out Of Stock</option>
-                                                              <option value="discontinued">Discontinued</option>
-                                                          </select>
-                                                      </div>
-                                                      <div class="col-xl-6">
-                                                          <label for="bundle_qty_edit" class="form-label">Bundle Quantity</label>
-                                                          <input type="number" class="form-control" name="bundle_qty" id="bundle_qty_edit" placeholder="Bundle Quantity">
-                                                      </div>
-                                                      <div class="col-xl-6">
-                                                          <label for="part_price_edit" class="form-label">Actual Price</label>
-                                                          <input type="number" class="form-control" name="part_price" id="part_price_edit" placeholder="Actual Price">
                                                       </div>
                                                   </div>
                                               </div>
@@ -659,17 +690,12 @@
                                                       </div>
 
                                                       <div class="col-xl-12 product-documents-container">
-                                                          <p class="fw-medium mb-2 fs-14">Part Images</p>
+                                                          <p class="fw-medium mb-2 fs-14">Part Image</p>
                                                           <div class="mb-2">
                                                               <img src="" id="edit_part_logo" alt="Current Part Image" class="img-thumbnail mb-2" style="max-height: 100px;">
                                                           </div>
-                                                          <input type="file" class="form-control" name="part_profile_picture">
+                                                          <input type="file" class="form-control" name="part_profile_picture" accept="image/*">
                                                           <label class="form-label text-muted mt-2 fw-normal fs-12">Upload new image to replace current one</label>
-                                                      </div>
-
-                                                      <div class="col-xl-12 product-documents-container">
-                                                          <p class="fw-medium mb-2 fs-14">Additional Documents</p>
-                                                          <textarea class="form-control" name="part_documents" id="part_documents_edit" rows="3" placeholder="Links to documents or document descriptions"></textarea>
                                                       </div>
 
                                                       <div class="col-xl-12">
@@ -677,89 +703,106 @@
                                                           <input type="text" class="form-control" name="part_tags" id="part_tags_edit" placeholder="Enter Part Tags (comma separated)">
                                                       </div>
 
+                                                      <div class="col-xl-12">
+                                                          <label for="status_edit" class="form-label">Status</label>
+                                                          <select class="form-control" name="status" id="status_edit" required>
+                                                              <option value="active">Active</option>
+                                                              <option value="inactive">Inactive</option>
+                                                              <option value="archived">Archived</option>
+                                                          </select>
+                                                      </div>
+
                                                       <!-- Branch Assignment -->
                                                       <div class="col-xl-12">
                                                           <label class="form-label">Branch</label>
-                                                          <select class="form-control" name="branch_id" id="part_branch_id_edit">
+                                                          <select class="form-control" name="branch_id" id="branch_id_edit">
                                                               <option value="">Select Branch (Optional)</option>
                                                               @foreach ($branches as $branch)
                                                                   <option value="{{ $branch->id }}">{{ $branch->branch_name }}</option>
                                                               @endforeach
                                                           </select>
                                                       </div>
+
+                                                      <!-- Material & Printing Properties Toggles -->
+                                                      <div class="col-12">
+                                                          <h5 class="mt-3">Material Properties</h5>
+                                                      </div>
+                                                      <div class="col-xl-4">
+                                                          <div class="custom-toggle-switch d-flex align-items-center mb-4">
+                                                              <input id="BST_edit" name="bst" type="checkbox" value="1">
+                                                              <label for="BST_edit" class="label-primary"></label>
+                                                              <span class="ms-3">BST</span>
+                                                          </div>
+                                                      </div>
+                                                      <div class="col-xl-4">
+                                                          <div class="custom-toggle-switch d-flex align-items-center mb-4">
+                                                              <input id="Plain_edit" name="plain" type="checkbox" value="1">
+                                                              <label for="Plain_edit" class="label-primary"></label>
+                                                              <span class="ms-3">Plain</span>
+                                                          </div>
+                                                      </div>
+                                                      <div class="col-xl-4">
+                                                          <div class="custom-toggle-switch d-flex align-items-center mb-4">
+                                                              <input id="Flat_edit" name="flat" type="checkbox" value="1">
+                                                              <label for="Flat_edit" class="label-primary"></label>
+                                                              <span class="ms-3">Flat</span>
+                                                          </div>
+                                                      </div>
+                                                      <div class="col-xl-4">
+                                                          <div class="custom-toggle-switch d-flex align-items-center mb-4">
+                                                              <input id="Gazzate_edit" name="gazzate" type="checkbox" value="1">
+                                                              <label for="Gazzate_edit" class="label-primary"></label>
+                                                              <span class="ms-3">Gazzate</span>
+                                                          </div>
+                                                      </div>
+                                                      <div class="col-xl-4">
+                                                          <div class="custom-toggle-switch d-flex align-items-center mb-4">
+                                                              <input id="BIO_edit" name="bio" type="checkbox" value="1">
+                                                              <label for="BIO_edit" class="label-primary"></label>
+                                                              <span class="ms-3">Bio</span>
+                                                          </div>
+                                                      </div>
+                                                      <div class="col-xl-4">
+                                                          <div class="custom-toggle-switch d-flex align-items-center mb-4">
+                                                              <input id="NORMAL_edit" name="normal" type="checkbox" value="1">
+                                                              <label for="NORMAL_edit" class="label-primary"></label>
+                                                              <span class="ms-3">Normal</span>
+                                                          </div>
+                                                      </div>
+                                                      <div class="col-xl-4">
+                                                          <div class="custom-toggle-switch d-flex align-items-center mb-4">
+                                                              <input id="Milky_edit" name="milky" type="checkbox" value="1">
+                                                              <label for="Milky_edit" class="label-primary"></label>
+                                                              <span class="ms-3">Milky</span>
+                                                          </div>
+                                                      </div>
+
+                                                      <div class="col-12">
+                                                          <h5 class="mt-3">Printing Properties</h5>
+                                                      </div>
+                                                      <div class="col-xl-4">
+                                                          <div class="custom-toggle-switch d-flex align-items-center mb-4">
+                                                              <input id="Roto_edit" name="roto_printing" type="checkbox" value="1">
+                                                              <label for="Roto_edit" class="label-primary"></label>
+                                                              <span class="ms-3">Roto Printing</span>
+                                                          </div>
+                                                      </div>
+                                                      <div class="col-xl-4">
+                                                          <div class="custom-toggle-switch d-flex align-items-center mb-4">
+                                                              <input id="Flexo_edit" name="flexo_printing" type="checkbox" value="1">
+                                                              <label for="Flexo_edit" class="label-primary"></label>
+                                                              <span class="ms-3">Flexo Printing</span>
+                                                          </div>
+                                                      </div>
+                                                      <div class="col-xl-4">
+                                                          <div class="custom-toggle-switch d-flex align-items-center mb-4">
+                                                              <input id="Recyle_edit" name="recycle_logo" type="checkbox" value="1">
+                                                              <label for="Recyle_edit" class="label-primary"></label>
+                                                              <span class="ms-3">Recycle Logo</span>
+                                                          </div>
+                                                      </div>
                                                   </div>
                                               </div>
-                                          </div>
-                                      </div>
-                                  </div>
-
-                                  <!-- Material & Printing Properties Toggles -->
-                                  <hr>
-                                  <div class="row">
-                                      <div class="col-xl-3">
-                                          <div class="custom-toggle-switch d-flex align-items-center mb-4">
-                                              <input id="BST_edit" name="bst" type="checkbox" value="1">
-                                              <label for="BST_edit" class="label-primary"></label><span class="ms-3">BST</span>
-                                          </div>
-                                      </div>
-                                      <div class="col-xl-3">
-                                          <div class="custom-toggle-switch d-flex align-items-center mb-4">
-                                              <input id="Plain_edit" name="plain" type="checkbox" value="1">
-                                              <label for="Plain_edit" class="label-primary"></label><span class="ms-3">Plain</span>
-                                          </div>
-                                      </div>
-                                      <div class="col-xl-3">
-                                          <div class="custom-toggle-switch d-flex align-items-center mb-4">
-                                              <input id="Flat_edit" name="flat" type="checkbox" value="1">
-                                              <label for="Flat_edit" class="label-primary"></label><span class="ms-3">Flat</span>
-                                          </div>
-                                      </div>
-                                      <div class="col-xl-3">
-                                          <div class="custom-toggle-switch d-flex align-items-center mb-4">
-                                              <input id="Gazzate_edit" name="gazzate" type="checkbox" value="1">
-                                              <label for="Gazzate_edit" class="label-primary"></label><span class="ms-3">Gazzate</span>
-                                          </div>
-                                      </div>
-                                      <div class="col-xl-3">
-                                          <div class="custom-toggle-switch d-flex align-items-center mb-4">
-                                              <input id="BIO_edit" name="bio" type="checkbox" value="1">
-                                              <label for="BIO_edit" class="label-primary"></label><span class="ms-3">Bio</span>
-                                          </div>
-                                      </div>
-                                      <div class="col-xl-3">
-                                          <div class="custom-toggle-switch d-flex align-items-center mb-4">
-                                              <input id="NORMAL_edit" name="normal" type="checkbox" value="1">
-                                              <label for="NORMAL_edit" class="label-primary"></label><span class="ms-3">Normal</span>
-                                          </div>
-                                      </div>
-                                      <div class="col-xl-3">
-                                          <div class="custom-toggle-switch d-flex align-items-center mb-4">
-                                              <input id="Milky_edit" name="milky" type="checkbox" value="1">
-                                              <label for="Milky_edit" class="label-primary"></label><span class="ms-3">Milky</span>
-                                          </div>
-                                      </div>
-                                      <div class="col-xl-3">
-                                          <div class="custom-toggle-switch d-flex align-items-center mb-4">
-                                              <input id="Roto_edit" name="roto_printing" type="checkbox" value="1">
-                                              <label for="Roto_edit" class="label-primary"></label><span class="ms-3">Roto Printing</span>
-                                          </div>
-                                      </div>
-                                      <div class="col-xl-3">
-                                          <div class="custom-toggle-switch d-flex align-items-center mb-4">
-                                              <input id="Flexo_edit" name="flexo_printing" type="checkbox" value="1">
-                                              <label for="Flexo_edit" class="label-primary"></label><span class="ms-3">Flexo Printing</span>
-                                          </div>
-                                      </div>
-                                      <div class="col-xl-3">
-                                          <div class="custom-toggle-switch d-flex align-items-center mb-4">
-                                              <input id="Sideseal_edit" name="sideseal" type="checkbox" value="1">
-                                              <label for="Sideseal_edit" class="label-primary"></label><span class="ms-3">Sideseal</span>
-                                          </div>
-                                      </div>
-                                      <div class="col-xl-3">
-                                          <div class="custom-toggle-switch d-flex align-items-center mb-4">
-                                              <input id="Recyle_edit" name="recycle_logo" type="checkbox" value="1">
-                                              <label for="Recyle_edit" class="label-primary"></label><span class="ms-3">Recycle Logo</span>
                                           </div>
                                       </div>
                                   </div>
@@ -960,7 +1003,6 @@
 
       const Toast = Swal.mixin(TOAST_CONFIG);
 
-      // Enhanced showToast function
       function showToast(title, message = '', type = 'info') {
           if (!title && !message) return;
           const validTypes = ['success', 'error', 'warning', 'info', 'question'];
@@ -984,10 +1026,24 @@
           try {
               $button.prop('disabled', true).text('Processing...');
 
+              const formData = new FormData($form[0]);
+
+              // Handle boolean fields
+              ['printing_status', 'bst', 'plain', 'flat', 'gazzate', 'bio', 'normal', 'milky',
+               'roto_printing', 'flexo_printing', 'recycle_logo'].forEach(field => {
+                  formData.set(field, $form.find(`[name="${field}"]`).is(':checked') ? '1' : '0');
+              });
+
+              // Handle array fields
+              if ($form.find('[name="part_tags"]').length) {
+                  const tags = $form.find('[name="part_tags"]').val().split(',').map(tag => tag.trim());
+                  formData.set('part_tags', JSON.stringify(tags));
+              }
+
               const response = await $.ajax({
                   url: url,
                   method: 'POST',
-                  data: new FormData($form[0]),
+                  data: formData,
                   cache: false,
                   contentType: false,
                   processData: false
@@ -1052,6 +1108,27 @@
               dom: 'Blfrtip',
               buttons: ['copy', 'csv', 'excel', 'print', 'colvis'],
               order: [[0, 'desc']],
+              columns: [
+                  { data: 'part_unique_code', title: 'Part ID' },
+                  { data: 'part_name', title: 'Part Name' },
+                  { data: 'hsn_no', title: 'HSN No' },
+                  { data: 'customer_name', title: 'Customer' },
+                  { data: 'part_category', title: 'Category' },
+                  { data: 'updated_at', title: 'Updated Date',
+                    render: function(data) {
+                        return moment(data).format('DD-MM-YYYY HH:mm');
+                    }
+                  },
+                  { data: 'part_weight', title: 'Weight (g)' },
+                  { data: 'status_badge', title: 'Status' },
+                  { data: 'dimensions', title: 'Dimensions' },
+                  { data: 'part_price', title: 'Price',
+                    render: function(data) {
+                        return '₹' + parseFloat(data).toFixed(2);
+                    }
+                  },
+                  { data: 'actions', title: 'Actions', orderable: false }
+              ],
               language: {
                   search: "_INPUT_",
                   searchPlaceholder: "Search Parts..."
@@ -1080,6 +1157,170 @@
 
       // Initialize on page load
       partDataFetchAll(partDateFilterValue);
+
+      // View part details
+      $(document).on('click', '.view_part', function(e) {
+          e.preventDefault();
+          const part = $(this).data('part');
+
+          // Basic Information
+          $('#view_part_name').text(part.part_name);
+          $('#view_part_model_customer').text(`${part.part_model} - ${part.customer_name}`);
+          $('#view_part_description').text(part.part_description || 'No description available');
+          $('#view_part_category').text(part.part_category || 'N/A');
+          $('#view_part_hsn').text(part.hsn_no || 'N/A');
+          $('#view_part_branch').text(part.branch_name || 'N/A');
+
+          // Dimensions
+          $('#view_part_dimensions').html(`
+              Length: ${part.part_length}mm<br>
+              Width: ${part.part_width}mm<br>
+              Height: ${part.part_height}mm<br>
+              Thickness: ${part.part_thickness}mm
+          `);
+
+          // Material Ratios
+          $('#view_part_ratios').html(`
+              LD: ${part.part_ld_ratio}%<br>
+              LLD: ${part.part_lld_ratio}%<br>
+              HD: ${part.part_hd_ratio}%<br>
+              RD: ${part.part_rd_ratio}%
+          `);
+
+          // Properties
+          $('#view_part_properties_1').html(`
+              Weight: ${part.part_weight}g<br>
+              Bundle Qty: ${part.bundle_qty}<br>
+              Sealing: ${part.sealing_type || 'N/A'}
+          `);
+
+          $('#view_part_properties_2').html(`
+              Printing: ${part.printing_status ? 'Yes' : 'No'}<br>
+              Colors: ${part.printing_colour || 'N/A'}<br>
+              Type: ${[
+                  part.bst && 'BST',
+                  part.plain && 'Plain',
+                  part.flat && 'Flat',
+                  part.gazzate && 'Gazzate',
+                  part.bio && 'Bio',
+                  part.normal && 'Normal',
+                  part.milky && 'Milky'
+              ].filter(Boolean).join(', ') || 'N/A'}
+          `);
+
+          // Price and Status
+          $('#view_part_price').text(`₹${parseFloat(part.part_price).toFixed(2)}`);
+          $('#view_part_quantity').text(part.part_quantity || '0');
+          $('#view_part_status').html(`<span class="badge bg-${
+              part.status === 'active' ? 'success' :
+              part.status === 'inactive' ? 'warning' : 'danger'
+          }">${part.status}</span>`);
+
+          // Tags
+          $('#view_part_tags').html(
+              part.part_tags ?
+              part.part_tags.map(tag => `<span class="badge bg-light text-dark me-1">${tag}</span>`).join('') :
+              'No tags'
+          );
+
+          // Profile Picture
+          if (part.part_profile_picture) {
+              $('#view_part_logo').attr('src', `{{ asset('storage') }}/${part.part_profile_picture}`);
+          } else {
+              $('#view_part_logo').attr('src', '{{ asset('assets/images/company-logos/default.png') }}');
+          }
+
+          $('#viewPartDataModal').offcanvas('show');
+      });
+
+      // Edit part
+      $(document).on('click', '.edit_part', function(e) {
+          e.preventDefault();
+          const part = $(this).data('part');
+
+          // Populate form fields
+          $('#edit_part_data_form [name="part_id"]').val(part.id);
+          $('#edit_part_data_form [name="part_name"]').val(part.part_name);
+          $('#edit_part_data_form [name="part_category"]').val(part.part_category);
+          $('#edit_part_data_form [name="part_model"]').val(part.part_model);
+          $('#edit_part_data_form [name="hsn_no"]').val(part.hsn_no);
+          $('#edit_part_data_form [name="reel_size"]').val(part.reel_size);
+
+          // Dimensions
+          $('#edit_part_data_form [name="part_length"]').val(part.part_length);
+          $('#edit_part_data_form [name="part_width"]').val(part.part_width);
+          $('#edit_part_data_form [name="part_height"]').val(part.part_height);
+          $('#edit_part_data_form [name="part_thickness"]').val(part.part_thickness);
+
+          // Material Ratios
+          $('#edit_part_data_form [name="part_ld_ratio"]').val(part.part_ld_ratio);
+          $('#edit_part_data_form [name="part_lld_ratio"]').val(part.part_lld_ratio);
+          $('#edit_part_data_form [name="part_hd_ratio"]').val(part.part_hd_ratio);
+          $('#edit_part_data_form [name="part_rd_ratio"]').val(part.part_rd_ratio);
+
+          // Properties
+          $('#edit_part_data_form [name="part_weight"]').val(part.part_weight);
+          $('#edit_part_data_form [name="part_price"]').val(part.part_price);
+          $('#edit_part_data_form [name="no_ups"]').val(part.no_ups);
+          $('#edit_part_data_form [name="sealing_type"]').val(part.sealing_type);
+          $('#edit_part_data_form [name="printing_status"]').prop('checked', part.printing_status);
+          $('#edit_part_data_form [name="printing_colour"]').val(part.printing_colour);
+          $('#edit_part_data_form [name="bundle_qty"]').val(part.bundle_qty);
+          $('#edit_part_data_form [name="part_quantity"]').val(part.part_quantity);
+
+          // Toggles
+          $('#edit_part_data_form [name="bst"]').prop('checked', part.bst);
+          $('#edit_part_data_form [name="plain"]').prop('checked', part.plain);
+          $('#edit_part_data_form [name="flat"]').prop('checked', part.flat);
+          $('#edit_part_data_form [name="gazzate"]').prop('checked', part.gazzate);
+          $('#edit_part_data_form [name="bio"]').prop('checked', part.bio);
+          $('#edit_part_data_form [name="normal"]').prop('checked', part.normal);
+          $('#edit_part_data_form [name="milky"]').prop('checked', part.milky);
+          $('#edit_part_data_form [name="roto_printing"]').prop('checked', part.roto_printing);
+          $('#edit_part_data_form [name="flexo_printing"]').prop('checked', part.flexo_printing);
+          $('#edit_part_data_form [name="recycle_logo"]').prop('checked', part.recycle_logo);
+
+          // Other fields
+          $('#edit_part_data_form [name="part_description"]').val(part.part_description);
+          $('#edit_part_data_form [name="part_tags"]').val(part.part_tags ? part.part_tags.join(', ') : '');
+          $('#edit_part_data_form [name="status"]').val(part.status);
+          $('#edit_part_data_form [name="branch_id"]').val(part.branch_id);
+          $('#edit_part_data_form [name="customer_id"]').val(part.customer_id);
+
+          // Show current image
+          if (part.part_profile_picture) {
+              $('#edit_part_logo').attr('src', `{{ asset('storage') }}/${part.part_profile_picture}`);
+          }
+
+          $('#editPartDataModal').modal('show');
+      });
+
+      // Delete part
+      $(document).on('click', '.delete_part', function(e) {
+          e.preventDefault();
+          const part = $(this).data('part');
+
+          Swal.fire({
+              title: 'Are you sure?',
+              text: `You want to delete part "${part.part_name}"?`,
+              icon: 'warning',
+              showCancelButton: true,
+              confirmButtonColor: '#3085d6',
+              cancelButtonColor: '#d33',
+              confirmButtonText: 'Yes, delete it!'
+          }).then((result) => {
+              if (result.isConfirmed) {
+                  $.ajax({
+                      url: `{{ url('parts') }}/${part.id}`,
+                      method: 'DELETE',
+                      success: function(response) {
+                          showToast('Success', 'Part deleted successfully', 'success');
+                          partDataFetchAll();
+                      }
+                  });
+              }
+          });
+      });
 
       // Export functionality
       $('#exportButton').on('click', async function() {

@@ -39,7 +39,9 @@ class Supplier extends Model
         'documents',
         'bank_details',
         'preferences',
-        'metadata'
+        'metadata',
+        'created_by',
+        'updated_by'
     ];
 
     protected $casts = [
@@ -65,7 +67,7 @@ class Supplier extends Model
     // Relationships
     public function materials(): HasMany
     {
-        return $this->hasMany(Material::class);
+        return $this->hasMany(Material::class, 'primary_supplier_id');
     }
 
     public function materialStocks(): HasMany
@@ -76,6 +78,16 @@ class Supplier extends Model
     public function materialTransactions(): HasMany
     {
         return $this->hasMany(MaterialStockTransaction::class);
+    }
+
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function updater()
+    {
+        return $this->belongsTo(User::class, 'updated_by');
     }
 
     // Scopes
@@ -99,6 +111,11 @@ class Supplier extends Model
         return $query->where('status', 'blocked');
     }
 
+    public function scopeBlacklisted($query)
+    {
+        return $query->where('status', 'blacklisted');
+    }
+
     public function scopePremium($query)
     {
         return $query->where('supplier_group', 'premium');
@@ -117,7 +134,13 @@ class Supplier extends Model
     // Accessors
     public function getFullAddressAttribute(): string
     {
-        return "{$this->address}, {$this->city}, {$this->state} {$this->pincode}, {$this->country}";
+        return implode(', ', array_filter([
+            $this->address,
+            $this->city,
+            $this->state,
+            $this->country,
+            $this->pincode
+        ]));
     }
 
     public function getTotalSuppliesAttribute(): int
@@ -128,6 +151,16 @@ class Supplier extends Model
     public function getTotalPurchasesAttribute(): float
     {
         return $this->metadata['total_purchases'] ?? 0;
+    }
+
+    public function getIsActiveAttribute(): bool
+    {
+        return $this->status === 'active';
+    }
+
+    public function getIsBlacklistedAttribute(): bool
+    {
+        return $this->status === 'blacklisted';
     }
 
     // Mutators

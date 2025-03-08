@@ -50,7 +50,8 @@ class CustomerController extends Controller
      */
     public function customers()
     {
-        return view('customers');
+        $branches = \App\Models\Branch::select('id', 'name')->get();
+        return view('customers', compact('branches'));
     }
 
     /**
@@ -107,7 +108,7 @@ class CustomerController extends Controller
         $output = '';
 
         if ($customers->count() > 0) {
-            $output .= '<table id="data_fetch_table" class="table table-hover table-striped">
+            $output .= '<table id="data_fetch_table" class="table table-hover">
                  <thead>
                    <tr>
                         <th scope="col">
@@ -117,20 +118,10 @@ class CustomerController extends Controller
                                    value=""
                                    aria-label="...">
                         </th>
-                        <th scope="col">Customer ID</th>
-                        <th scope="col">Company Name</th>
-                        <th scope="col">Contact Person</th>
-                        <th scope="col">Email</th>
-                        <th scope="col">Phone</th>
-                        <th scope="col">Location</th>
-                        <th scope="col">GST Number</th>
-                        <th scope="col">Industry</th>
-                        <th scope="col">Business Type</th>
-                        <th scope="col">Customer Group</th>
-                        <th scope="col">Company Size</th>
-                        <th scope="col">Credit Limit</th>
-                        <th scope="col">Payment Terms</th>
-                        <th scope="col">Status</th>
+                        <th scope="col">Company Info</th>
+                        <th scope="col">Contact Details</th>
+                        <th scope="col">Business Info</th>
+                        <th scope="col">Address</th>
                         <th scope="col">Actions</th>
                     </tr>
                  </thead>
@@ -138,43 +129,45 @@ class CustomerController extends Controller
               foreach ($customers as $customer) {
                 $output .= '  <tr class="crm-contact companies-list">
                     <td class="companies-checkbox">
-                        <input class="form-check-input" type="checkbox" id="checkbox_'.$customer->id.'" value="'.$customer->id.'" aria-label="...">&nbsp;'.$customer->id.'
+                        <input class="form-check-input" type="checkbox" id="checkbox_'.$customer->id.'" value="'.$customer->id.'" aria-label="...">&nbsp;#'.$customer->id.'
                     </td>
-                    <td>'.$customer->customer_unique_code.'</td>
                     <td>
                         <div class="d-flex align-items-center gap-2">
                             <div class="avatar avatar-sm">
                                 <img src="'.$customer->company_profile_picture.'" alt="Company Logo" class="rounded-circle" onerror="this.src=\''.asset('assets/images/company-logos/default.png').'\'">
                             </div>
                             <div>
-                                <a data-bs-toggle="offcanvas" href="#viewDataModal" role="button" aria-controls="viewDataModal" class="ViewDataIcon" data-id="' . $customer->id . '">'.$customer->company_name.'</a>
+                                <a data-bs-toggle="offcanvas" href="#viewDataModal" role="button" aria-controls="viewDataModal" class="ViewDataIcon fw-semibold" data-id="' . $customer->id . '">'.$customer->company_name.'</a>
+                                <br>
+                                <small class="text-muted">'.$customer->customer_unique_code.'</small>
                             </div>
                         </div>
                     </td>
-                    <td>'.$customer->contact_person.'</td>
                     <td>
-                        <span class="d-block mb-0"><i class="ri-mail-line fs-14 text-muted d-inline-block me-2 align-middle"></i>'.$customer->email.'</span>
-                    </td>
-                    <td>
-                        <span class="d-block"><i class="ri-phone-line fs-14 text-muted d-inline-block me-2 align-middle"></i>'.$customer->phone.'</span>
-                    </td>
-                    <td>
-                        <span class="d-block">'.($customer->city ? $customer->city . ', ' : '') . ($customer->state ?: 'N/A').'</span>
-                    </td>
-                    <td>'.$customer->gst_number.'</td>
-                    <td>'.$customer->industry_type.'</td>
-                    <td>'.ucfirst($customer->business_type ?: 'N/A').'</td>
-                    <td>'.ucfirst($customer->customer_group ?: 'N/A').'</td>
-                    <td>
-                        <div class="d-flex align-items-center flex-wrap gap-1">
-                            <span class="badge bg-primary1-transparent">'.$customer->company_size.'</span>
+                        <div class="d-flex flex-column">
+                            <span class="fw-semibold">'.$customer->contact_person.'</span>
+                            <span class="text-muted small"><i class="ri-phone-line"></i> '.$customer->phone.'</span>
+
                         </div>
                     </td>
-                    <td>₹'.number_format($customer->credit_limit, 2).'</td>
-                    <td>'.str_replace('_', ' ', ucfirst($customer->payment_terms ?: 'N/A')).'</td>
                     <td>
-                        <span class="badge bg-'.($customer->status == 'active' ? 'success' : ($customer->status == 'inactive' ? 'warning' : 'danger')).'-transparent">'.ucfirst($customer->status ?: 'Active').'</span>
+                        <div class="d-flex flex-column">
+                            <div class="mb-1">
+                                <span class="badge bg-'.($customer->status == 'active' ? 'success' : ($customer->status == 'inactive' ? 'warning' : 'danger')).'-transparent">'.ucfirst($customer->status ?: 'Active').'</span>
+                                <span class="badge bg-primary-transparent ms-1">'.ucfirst($customer->customer_group ?: 'N/A').'</span>
+                            </div>
+                            <small class="text-muted">'.$customer->industry_type.'</small>
+                            <small class="text-muted">'.ucfirst($customer->business_type ?: 'N/A').'</small>
+                        </div>
                     </td>
+                     <td>
+                        <div class="d-flex flex-column">
+
+                            <span class="text-muted small"><i class="ri-mail-line"></i> '.$customer->email.'</span>
+                            <span class="text-muted small"><i class="ri-map-pin-line"></i> '.($customer->city ? $customer->city . ', ' : '') . ($customer->state ?: 'N/A').'</span>
+                        </div>
+                    </td>
+
                     <td>
                         <div class="btn-list">
                             <a data-bs-toggle="offcanvas"
@@ -182,24 +175,29 @@ class CustomerController extends Controller
                                role="button"
                                aria-controls="viewDataModal"
                                class="btn btn-sm btn-primary-light btn-icon ViewDataIcon"
-                               data-id="' . $customer->id . '">
+                               data-id="' . $customer->id . '"
+                               data-tippy-content="View Details">
                                 <i class="ri-eye-line"></i>
                             </a>
                             <a href="#"
                                id="'.$customer->id.'"
+                               data-id="'.$customer->id.'"
                                class="btn btn-sm btn-info-light btn-icon EditDataIcon"
                                data-bs-toggle="modal"
-                               data-bs-target="#editDataModal">
+                               data-bs-target="#editDataModal"
+                               data-tippy-content="Edit Customer">
                                 <i class="ri-pencil-line"></i>
                             </a>
                             <button class="btn btn-sm btn-primary2-light btn-icon DeleteDataIcon"
-                                    id="'.$customer->id.'">
+                                    id="'.$customer->id.'"
+                                    data-tippy-content="Delete Customer">
                                 <i class="ri-delete-bin-line"></i>
                             </button>
                         </div>
                     </td>
                 </tr>';
               }
+
               $output .= '</tbody>
                             <tfoot>
                                <tr>
@@ -210,20 +208,10 @@ class CustomerController extends Controller
                                                value=""
                                                aria-label="...">
                                     </th>
-                                    <th scope="col">Customer ID</th>
-                                    <th scope="col">Company Name</th>
-                                    <th scope="col">Contact Person</th>
-                                    <th scope="col">Email</th>
-                                    <th scope="col">Phone</th>
-                                    <th scope="col">Location</th>
-                                    <th scope="col">GST Number</th>
-                                    <th scope="col">Industry</th>
-                                    <th scope="col">Business Type</th>
-                                    <th scope="col">Customer Group</th>
-                                    <th scope="col">Company Size</th>
-                                    <th scope="col">Credit Limit</th>
-                                    <th scope="col">Payment Terms</th>
-                                    <th scope="col">Status</th>
+                                    <th scope="col">Company Info</th>
+                                    <th scope="col">Contact Details</th>
+                                    <th scope="col">Business Info</th>
+                                    <th scope="col">Address</th>
                                     <th scope="col">Actions</th>
                                </tr>
                             </tfoot>
@@ -248,10 +236,17 @@ class CustomerController extends Controller
     {
         $user_id = Auth::id();
 
+           // Generate unique customer code
+           $customer_unique_code = IdGenerator::generate([
+            'table' => 'customers',
+            'field' => 'customer_unique_code',
+            'length' => 8,
+            'prefix' => 'CUS'
+        ]);
         try {
             // Enhanced validation with better rules
             $validator = Validator::make($request->all(), [
-                'customer_unique_code' => 'required|string|unique:customers,customer_unique_code,' . ($request->customer_id ?? ''),
+
                 'company_profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
                 'company_name' => 'required|string|max:255',
                 'contact_person' => 'required|string|max:255',
@@ -295,8 +290,7 @@ class CustomerController extends Controller
                 'sales_person_id' => 'nullable|exists:users,id',
                 'branch_id' => 'nullable|exists:branches,id'
             ], [
-                'customer_unique_code.required' => 'A unique customer code is required.',
-                'customer_unique_code.unique' => 'This customer code is already in use.',
+
                 'company_name.required' => 'The company name is required.',
                 'contact_person.required' => 'The contact person is required.',
                 'email.required' => 'The email is required.',
@@ -336,13 +330,7 @@ class CustomerController extends Controller
             // Start transaction for data integrity
             DB::beginTransaction();
 
-            // Generate unique customer code
-            $customer_unique_code = IdGenerator::generate([
-                'table' => 'customers',
-                'field' => 'customer_unique_code',
-                'length' => 8,
-                'prefix' => 'CUS'
-            ]);
+
 
             $companyProfilePicture = null;
 
@@ -955,3 +943,4 @@ class CustomerController extends Controller
         Cache::forget('customers_this_year_' . Auth::id());
     }
 }
+

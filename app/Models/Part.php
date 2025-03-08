@@ -65,6 +65,19 @@ class Part extends Model
         'roto_printing' => 'boolean',
         'flexo_printing' => 'boolean',
         'recycle_logo' => 'boolean',
+        'part_length' => 'decimal:3',
+        'part_width' => 'decimal:3',
+        'part_height' => 'decimal:3',
+        'part_thickness' => 'decimal:3',
+        'part_ld_ratio' => 'decimal:3',
+        'part_lld_ratio' => 'decimal:3',
+        'part_hd_ratio' => 'decimal:3',
+        'part_rd_ratio' => 'decimal:3',
+        'part_weight' => 'decimal:3',
+        'part_price' => 'decimal:2',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'deleted_at' => 'datetime'
     ];
 
     // Relationships

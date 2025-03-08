@@ -26,124 +26,157 @@ class PartController extends Controller
 
     public function getData(Request $request)
     {
-        $query = Part::with(['branch', 'customer', 'documents'])
+        $query = Part::with(['branch', 'customer'])
             ->select('parts.*');
 
-        // Apply filters
         if ($request->filled('date_filter')) {
             $query->filterByDate($request->date_filter);
-        }
-
-        if ($request->filled('branch_id')) {
-            $query->where('branch_id', $request->branch_id);
-        }
-
-        if ($request->filled('customer_id')) {
-            $query->where('customer_id', $request->customer_id);
-        }
-
-        if ($request->filled('category')) {
-            $query->where('part_category', $request->category);
-        }
-
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
         }
 
         return DataTables::of($query)
             ->addColumn('actions', function ($part) {
                 return view('parts.partials.actions', compact('part'));
             })
-            ->addColumn('documents_count', function ($part) {
-                return $part->documents->count();
-            })
             ->addColumn('customer_name', function ($part) {
-                return $part->customer ? $part->customer->customer_name : '-';
+                return $part->customer ? $part->customer->company_name : '-';
             })
             ->addColumn('branch_name', function ($part) {
-                return $part->branch ? $part->branch->name : '-';
+                return $part->branch ? $part->branch_name : '-';
             })
-            ->addColumn('created_date', function ($part) {
-                return $part->created_at->format('Y-m-d H:i:s');
+            ->addColumn('dimensions', function ($part) {
+                return "{$part->part_length}x{$part->part_width}x{$part->part_height}mm";
             })
-            ->filterColumn('customer_name', function ($query, $keyword) {
-                $query->whereHas('customer', function ($q) use ($keyword) {
-                    $q->where('customer_name', 'like', "%{$keyword}%");
-                });
+            ->addColumn('material_ratio', function ($part) {
+                return "LD:{$part->part_ld_ratio}% LLD:{$part->part_lld_ratio}% HD:{$part->part_hd_ratio}% RD:{$part->part_rd_ratio}%";
             })
-            ->filterColumn('branch_name', function ($query, $keyword) {
-                $query->whereHas('branch', function ($q) use ($keyword) {
-                    $q->where('branch_name', 'like', "%{$keyword}%");
-                });
+            ->addColumn('status_badge', function ($part) {
+                $class = match($part->status) {
+                    'active' => 'success',
+                    'inactive' => 'warning',
+                    'archived' => 'danger',
+                    default => 'secondary'
+                };
+                return "<span class='badge bg-{$class}'>{$part->status}</span>";
             })
-            ->rawColumns(['actions'])
+            ->rawColumns(['actions', 'status_badge'])
             ->make(true);
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'part_unique_code' => 'required|unique:parts,part_unique_code|max:50',
-            'part_name' => 'required|max:100',
-            'part_category' => 'nullable|max:50',
-            'part_model' => 'nullable|max:50',
-            'hsn_no' => 'nullable|max:20',
+            'part_name' => 'required|string|max:100',
+            'part_category' => 'nullable|string|max:50',
+            'part_model' => 'nullable|string|max:50',
+            'hsn_no' => 'nullable|string|max:20',
+            'reel_size' => 'nullable|string|max:20',
+            'part_length' => 'nullable|numeric|min:0',
+            'part_width' => 'nullable|numeric|min:0',
+            'part_height' => 'nullable|numeric|min:0',
+            'part_thickness' => 'nullable|numeric|min:0',
+            'part_ld_ratio' => 'nullable|numeric|min:0|max:100',
+            'part_lld_ratio' => 'nullable|numeric|min:0|max:100',
+            'part_hd_ratio' => 'nullable|numeric|min:0|max:100',
+            'part_rd_ratio' => 'nullable|numeric|min:0|max:100',
+            'part_weight' => 'nullable|numeric|min:0',
+            'part_price' => 'nullable|numeric|min:0',
+            'no_ups' => 'nullable|integer|min:1',
+            'sealing_type' => 'nullable|string|max:50',
+            'printing_status' => 'boolean',
+            'printing_colour' => 'nullable|string|max:50',
+            'bundle_qty' => 'nullable|integer|min:0',
+            'part_quantity' => 'nullable|integer|min:0',
+            'bst' => 'boolean',
+            'plain' => 'boolean',
+            'flat' => 'boolean',
+            'gazzate' => 'boolean',
+            'bio' => 'boolean',
+            'normal' => 'boolean',
+            'milky' => 'boolean',
+            'roto_printing' => 'boolean',
+            'flexo_printing' => 'boolean',
+            'recycle_logo' => 'boolean',
+            'part_description' => 'nullable|string',
             'part_profile_picture' => 'nullable|image|max:2048',
-            // Add other validation rules
+            'part_tags' => 'nullable|array',
+            'status' => 'required|in:active,inactive,archived',
+            'branch_id' => 'nullable|exists:branches,id',
+            'customer_id' => 'nullable|exists:customers,id',
         ]);
+
+        // Generate unique code
+        $validated['part_unique_code'] = 'PRT' . str_pad(Part::max('id') + 1, 6, '0', STR_PAD_LEFT);
 
         DB::beginTransaction();
         try {
-            // Handle profile picture upload
             if ($request->hasFile('part_profile_picture')) {
                 $path = $request->file('part_profile_picture')->store('parts/profiles', 'public');
                 $validated['part_profile_picture'] = $path;
             }
 
-            // Create part
+            $validated['user_id'] = auth()->id();
             $part = Part::create($validated);
 
-            // Handle documents
-            if ($request->hasFile('documents')) {
-                foreach ($request->file('documents') as $document) {
-                    $path = $document->store('parts/documents', 'public');
-
-                    PartDocument::create([
-                        'part_id' => $part->id,
-                        'document_name' => $document->getClientOriginalName(),
-                        'file_path' => $path,
-                        'file_type' => $document->getClientMimeType(),
-                        'file_size' => $document->getSize(),
-                        'uploaded_by' => auth()->id()
-                    ]);
-                }
-            }
-
             DB::commit();
-            return response()->json(['success' => true, 'message' => 'Part created successfully']);
+            return response()->json([
+                'success' => true,
+                'message' => 'Part created successfully',
+                'data' => $part
+            ]);
         } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json(['success' => false, 'message' => 'Failed to create part'], 500);
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to create part: ' . $e->getMessage()
+            ], 500);
         }
     }
 
     public function update(Request $request, Part $part)
     {
         $validated = $request->validate([
-            'part_unique_code' => 'required|max:50|unique:parts,part_unique_code,' . $part->id,
-            'part_name' => 'required|max:100',
-            'part_category' => 'nullable|max:50',
-            'part_model' => 'nullable|max:50',
-            'hsn_no' => 'nullable|max:20',
+            'part_name' => 'required|string|max:100',
+            'part_category' => 'nullable|string|max:50',
+            'part_model' => 'nullable|string|max:50',
+            'hsn_no' => 'nullable|string|max:20',
+            'reel_size' => 'nullable|string|max:20',
+            'part_length' => 'nullable|numeric|min:0',
+            'part_width' => 'nullable|numeric|min:0',
+            'part_height' => 'nullable|numeric|min:0',
+            'part_thickness' => 'nullable|numeric|min:0',
+            'part_ld_ratio' => 'nullable|numeric|min:0|max:100',
+            'part_lld_ratio' => 'nullable|numeric|min:0|max:100',
+            'part_hd_ratio' => 'nullable|numeric|min:0|max:100',
+            'part_rd_ratio' => 'nullable|numeric|min:0|max:100',
+            'part_weight' => 'nullable|numeric|min:0',
+            'part_price' => 'nullable|numeric|min:0',
+            'no_ups' => 'nullable|integer|min:1',
+            'sealing_type' => 'nullable|string|max:50',
+            'printing_status' => 'boolean',
+            'printing_colour' => 'nullable|string|max:50',
+            'bundle_qty' => 'nullable|integer|min:0',
+            'part_quantity' => 'nullable|integer|min:0',
+            'bst' => 'boolean',
+            'plain' => 'boolean',
+            'flat' => 'boolean',
+            'gazzate' => 'boolean',
+            'bio' => 'boolean',
+            'normal' => 'boolean',
+            'milky' => 'boolean',
+            'roto_printing' => 'boolean',
+            'flexo_printing' => 'boolean',
+            'recycle_logo' => 'boolean',
+            'part_description' => 'nullable|string',
             'part_profile_picture' => 'nullable|image|max:2048',
-            // Add other validation rules
+            'part_tags' => 'nullable|array',
+            'status' => 'required|in:active,inactive,archived',
+            'branch_id' => 'nullable|exists:branches,id',
+            'customer_id' => 'nullable|exists:customers,id',
         ]);
 
         DB::beginTransaction();
         try {
-            // Handle profile picture update
             if ($request->hasFile('part_profile_picture')) {
-                // Delete old profile picture
                 if ($part->part_profile_picture) {
                     Storage::disk('public')->delete($part->part_profile_picture);
                 }
@@ -151,30 +184,20 @@ class PartController extends Controller
                 $validated['part_profile_picture'] = $path;
             }
 
-            // Update part
             $part->update($validated);
 
-            // Handle new documents
-            if ($request->hasFile('documents')) {
-                foreach ($request->file('documents') as $document) {
-                    $path = $document->store('parts/documents', 'public');
-
-                    PartDocument::create([
-                        'part_id' => $part->id,
-                        'document_name' => $document->getClientOriginalName(),
-                        'file_path' => $path,
-                        'file_type' => $document->getClientMimeType(),
-                        'file_size' => $document->getSize(),
-                        'uploaded_by' => auth()->id()
-                    ]);
-                }
-            }
-
             DB::commit();
-            return response()->json(['success' => true, 'message' => 'Part updated successfully']);
+            return response()->json([
+                'success' => true,
+                'message' => 'Part updated successfully',
+                'data' => $part
+            ]);
         } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json(['success' => false, 'message' => 'Failed to update part'], 500);
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to update part: ' . $e->getMessage()
+            ], 500);
         }
     }
 
